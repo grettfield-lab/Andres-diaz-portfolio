@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
-
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import ContactPageContent from '@/components/ContactPageContent'

@@ -83,19 +83,33 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         delay: 0.2,
       })
 
-      gsap.from('.wg-card', {
-        opacity: 0,
-        y: 72,
-        scale: 0.97,
-        duration: 1.0,
-        ease: 'power3.out',
-        stagger: 0.08,
-        force3D: true,
+      // Per-image direction-aware clip-path reveal
+      gsap.utils.toArray<HTMLElement>('.wg-image').forEach(img => {
+        gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 })
+        ScrollTrigger.create({
+          trigger: img,
+          start: 'top 92%',
+          onEnter: () => gsap.to(img, {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: 0.85, ease: 'power3.out', overwrite: 'auto',
+          }),
+          onEnterBack: () => {
+            gsap.set(img, { clipPath: 'inset(100% 0 0 0)' })
+            gsap.to(img, {
+              clipPath: 'inset(0 0 0% 0)', opacity: 1,
+              duration: 0.85, ease: 'power3.out', overwrite: 'auto',
+            })
+          },
+          onLeave:     () => gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 }),
+          onLeaveBack: () => gsap.set(img, { clipPath: 'inset(100% 0 0 0)', opacity: 0 }),
+        })
+      })
+
+      // Caption text stagger
+      gsap.from('.wg-caption', {
+        opacity: 0, y: 16, duration: 0.65, ease: 'power3.out', stagger: 0.07,
         scrollTrigger: {
-          trigger: '.wg-grid',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
+          trigger: '.wg-grid', start: 'top 92%', once: true, invalidateOnRefresh: true,
         },
       })
     }, sectionRef)
@@ -147,7 +161,7 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         <div className="wg-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {projects.map((p) => (
             <div key={p.id} className="wg-card group cursor-default">
-              <div className="overflow-hidden">
+              <div className="wg-image overflow-hidden">
                 <div
                   className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   style={{ aspectRatio: '3/2', willChange: 'transform' }}
@@ -163,7 +177,7 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
                   <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
                 </div>
               </div>
-              <div className="pt-3 pb-5">
+              <div className="wg-caption pt-3 pb-5">
                 <p className="font-display font-semibold text-[17px] md:text-[19px] text-primary leading-snug">
                   {p.title}
                 </p>

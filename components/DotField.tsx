@@ -47,8 +47,9 @@ export default function DotField() {
     let lastWX = -9999, lastWY = -9999
 
     const build = () => {
-      W = window.innerWidth
-      H = window.innerHeight
+      const vp = window.visualViewport
+      W = Math.round(vp ? vp.width  : window.innerWidth)
+      H = Math.round(vp ? vp.height : window.innerHeight)
       canvas.width  = Math.round(W * dpr)
       canvas.height = Math.round(H * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -160,18 +161,27 @@ export default function DotField() {
       raf = requestAnimationFrame(tick)
     }
 
+    // Returns visual-viewport offset (non-zero only when pinch-zoomed)
+    const vpOff = () => {
+      const vp = window.visualViewport
+      return vp ? { ox: vp.offsetLeft, oy: vp.offsetTop } : { ox: 0, oy: 0 }
+    }
+
     // Mouse (desktop)
     const onMouseMove  = (e: MouseEvent) => { mx = e.clientX; my = e.clientY }
     const onMouseLeave = () => { mx = -9999; my = -9999 }
 
-    // Touch (mobile) — clientX/Y are viewport-relative, unaffected by scroll
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        mx = e.touches[0].clientX
-        my = e.touches[0].clientY
-      }
+    // Touch (mobile) — changedTouches gives the finger that actually moved
+    const setTouch = (e: TouchEvent) => {
+      const t = e.changedTouches[0]
+      if (!t) return
+      const { ox, oy } = vpOff()
+      mx = t.clientX + ox
+      my = t.clientY + oy
     }
-    const onTouchEnd = () => { mx = -9999; my = -9999 }
+    const onTouchStart  = (e: TouchEvent) => setTouch(e)
+    const onTouchMove   = (e: TouchEvent) => setTouch(e)
+    const onTouchEnd    = () => { mx = -9999; my = -9999 }
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const onResize = () => {
@@ -192,10 +202,11 @@ export default function DotField() {
       drawStatic()
     } else {
       raf = requestAnimationFrame(tick)
-      document.addEventListener('mousemove', onMouseMove, { passive: true })
-      document.addEventListener('mouseleave', onMouseLeave)
-      document.addEventListener('touchmove', onTouchMove, { passive: true })
-      document.addEventListener('touchend', onTouchEnd)
+      document.addEventListener('mousemove',   onMouseMove,  { passive: true })
+      document.addEventListener('mouseleave',  onMouseLeave)
+      document.addEventListener('touchstart',  onTouchStart, { passive: true })
+      document.addEventListener('touchmove',   onTouchMove,  { passive: true })
+      document.addEventListener('touchend',    onTouchEnd)
       document.addEventListener('touchcancel', onTouchEnd)
     }
 
@@ -204,10 +215,11 @@ export default function DotField() {
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseleave', onMouseLeave)
-      document.removeEventListener('touchmove', onTouchMove)
-      document.removeEventListener('touchend', onTouchEnd)
+      document.removeEventListener('mousemove',   onMouseMove)
+      document.removeEventListener('mouseleave',  onMouseLeave)
+      document.removeEventListener('touchstart',  onTouchStart)
+      document.removeEventListener('touchmove',   onTouchMove)
+      document.removeEventListener('touchend',    onTouchEnd)
       document.removeEventListener('touchcancel', onTouchEnd)
       window.removeEventListener('resize', onResize)
     }

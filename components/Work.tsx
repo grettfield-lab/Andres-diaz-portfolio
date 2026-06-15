@@ -160,16 +160,35 @@ export default function Work() {
           ease: 'power3.out',
         }).from(
           section.querySelectorAll('.work-card'),
-          {
-            opacity: 0,
-            y: 80,
-            duration: 1.0,
-            ease: 'power3.out',
-            stagger: 0.09,
-            force3D: true,
-          },
+          { y: 64, duration: 0.9, ease: 'power3.out', stagger: 0.09, force3D: true },
           '-=0.4',
+        ).from(
+          section.querySelectorAll('.work-caption'),
+          { opacity: 0, y: 12, duration: 0.6, ease: 'power3.out', stagger: 0.09 },
+          '<',
         )
+
+        // Per-image direction-aware clip-path reveal
+        section.querySelectorAll<HTMLElement>('.work-image').forEach(img => {
+          gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 })
+          ScrollTrigger.create({
+            trigger: img,
+            start: 'top 92%',
+            onEnter: () => gsap.to(img, {
+              clipPath: 'inset(0 0 0% 0)', opacity: 1,
+              duration: 0.85, ease: 'power3.out', overwrite: 'auto',
+            }),
+            onEnterBack: () => {
+              gsap.set(img, { clipPath: 'inset(100% 0 0 0)' })
+              gsap.to(img, {
+                clipPath: 'inset(0 0 0% 0)', opacity: 1,
+                duration: 0.85, ease: 'power3.out', overwrite: 'auto',
+              })
+            },
+            onLeave:     () => gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 }),
+            onLeaveBack: () => gsap.set(img, { clipPath: 'inset(100% 0 0 0)', opacity: 0 }),
+          })
+        })
       })
     }, sectionRef)
 
@@ -219,7 +238,7 @@ export default function Work() {
                     className="work-card group block"
                   >
                     {/* Image */}
-                    <div className="overflow-hidden mb-5">
+                    <div className="work-image overflow-hidden mb-5">
                       <div
                         className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                         style={{ aspectRatio: '4/5', willChange: 'transform' }}
@@ -237,12 +256,14 @@ export default function Work() {
                     </div>
 
                     {/* Text */}
-                    <p className="font-display font-semibold text-[17px] md:text-[19px] text-primary mb-1.5 leading-snug">
-                      {p.title}
-                    </p>
-                    <p className="font-mono text-[13px] tracking-[0.15em] uppercase text-muted">
-                      {p.type} · {p.year}
-                    </p>
+                    <div className="work-caption">
+                      <p className="font-display font-semibold text-[17px] md:text-[19px] text-primary mb-1.5 leading-snug">
+                        {p.title}
+                      </p>
+                      <p className="font-mono text-[13px] tracking-[0.15em] uppercase text-muted">
+                        {p.type} · {p.year}
+                      </p>
+                    </div>
                   </Link>
                 ))}
               </div>

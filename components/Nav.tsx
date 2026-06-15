@@ -154,7 +154,11 @@ export default function Nav() {
   const linkColor = navOnLight
     ? 'text-[#0A0A0A]/60 hover:text-[#0A0A0A]'
     : 'text-muted hover:text-primary'
-  const logoColor = navOnLight ? 'text-[#0A0A0A]' : 'text-primary'
+  const logoColor = navOnLight
+    ? 'text-[#0A0A0A]'
+    : scrolled
+      ? 'text-primary'
+      : 'text-primary/70'
 
   return (
     <>
@@ -251,7 +255,9 @@ export default function Nav() {
             href={isHome ? '#contact' : '/contact'}
             className={[
               `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 hover:border-accent hover:text-accent transition-all duration-500`,
-              navOnLight ? 'text-[#0A0A0A] border border-[#0A0A0A]/20' : 'text-primary border border-primary/20',
+              navOnLight
+                ? 'text-[#0A0A0A] border border-[#0A0A0A]/20'
+                : 'text-primary/70 border border-primary/20',
               scrolled ? 'opacity-0 pointer-events-none translate-y-[-4px]' : 'opacity-100 pointer-events-auto translate-y-0',
             ].join(' ')}
           >

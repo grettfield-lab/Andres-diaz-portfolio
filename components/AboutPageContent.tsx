@@ -38,22 +38,22 @@ export default function AboutPageContent() {
       // Hero entrance
       gsap.from('.apc-hero-label', {
         opacity: 0,
-        y: 16,
-        duration: 0.8,
+        y: 28,
+        duration: 0.9,
         ease: 'power3.out',
         delay: 0.3,
       })
       gsap.from('.apc-hero-name', {
         opacity: 0,
-        y: 60,
-        duration: 1.1,
+        y: 110,
+        duration: 1.2,
         ease: 'power3.out',
         delay: 0.45,
       })
       gsap.from('.apc-hero-img', {
         opacity: 0,
-        scale: 1.06,
-        duration: 1.6,
+        scale: 1.12,
+        duration: 1.8,
         ease: 'power3.out',
         delay: 0.1,
       })
@@ -61,57 +61,57 @@ export default function AboutPageContent() {
       // Bio section
       gsap.from('.apc-bio-head', {
         opacity: 0,
-        x: -40,
-        duration: 0.9,
+        x: -72,
+        duration: 1.0,
         ease: 'power3.out',
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 80%' },
+        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
       gsap.from('.apc-bio-para', {
         opacity: 0,
-        y: 32,
-        duration: 0.85,
+        y: 56,
+        duration: 0.95,
         ease: 'power3.out',
-        stagger: 0.13,
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 78%' },
+        stagger: 0.16,
+        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
 
       // Manifesto
       gsap.from('.apc-manifesto-line', {
         opacity: 0,
-        y: 56,
-        duration: 1.1,
+        y: 90,
+        duration: 1.2,
         ease: 'power3.out',
-        stagger: 0.18,
-        scrollTrigger: { trigger: '.apc-manifesto', start: 'top 82%' },
+        stagger: 0.2,
+        scrollTrigger: { trigger: '.apc-manifesto', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
 
       // Credits
       gsap.from('.apc-credit-row', {
         opacity: 0,
-        x: -28,
-        duration: 0.7,
+        x: -52,
+        duration: 0.8,
         ease: 'power3.out',
-        stagger: 0.07,
-        scrollTrigger: { trigger: '.apc-credits', start: 'top 82%' },
+        stagger: 0.08,
+        scrollTrigger: { trigger: '.apc-credits', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
 
       // Awards
       gsap.from('.apc-award-row', {
         opacity: 0,
-        x: -28,
-        duration: 0.7,
+        x: -52,
+        duration: 0.8,
         ease: 'power3.out',
-        stagger: 0.06,
-        scrollTrigger: { trigger: '.apc-awards', start: 'top 84%' },
+        stagger: 0.07,
+        scrollTrigger: { trigger: '.apc-awards', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
 
       // Portrait
       gsap.from('.apc-portrait', {
         opacity: 0,
-        scale: 1.04,
-        duration: 1.2,
+        scale: 1.08,
+        duration: 1.4,
         ease: 'power3.out',
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 82%' },
+        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
       })
     }, wrapperRef)
 
@@ -203,7 +203,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* ── Manifesto ── */}
-      <section className="apc-manifesto bg-surface py-28 md:py-40 px-6 md:px-10">
+      <section className="apc-manifesto bg-surface/80 py-28 md:py-40 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p
             className="font-display font-black leading-[0.88] tracking-normal text-primary"
@@ -248,7 +248,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* ── Awards & Nominations ── */}
-      <section className="apc-awards bg-surface py-24 md:py-32 px-6 md:px-10">
+      <section className="apc-awards bg-surface/80 py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-14">
             Awards & Nominations

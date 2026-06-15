@@ -77,22 +77,24 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
 
       gsap.from('.wg-heading', {
         opacity: 0,
-        y: 40,
-        duration: 0.9,
+        y: 72,
+        duration: 1.1,
         ease: 'power3.out',
         delay: 0.2,
       })
 
       gsap.from('.wg-card', {
         opacity: 0,
-        y: 40,
-        duration: 0.8,
+        y: 72,
+        scale: 0.97,
+        duration: 1.0,
         ease: 'power3.out',
-        stagger: 0.06,
+        stagger: 0.08,
         force3D: true,
         scrollTrigger: {
           trigger: '.wg-grid',
-          start: 'top 86%',
+          start: 'top 100%',
+          once: true,
           invalidateOnRefresh: true,
         },
       })

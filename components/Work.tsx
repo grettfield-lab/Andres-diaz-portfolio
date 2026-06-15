@@ -133,12 +133,13 @@ export default function Work() {
     const ctx = gsap.context(() => {
       gsap.from('.work-main-heading', {
         opacity: 0,
-        y: 28,
-        duration: 0.8,
+        y: 56,
+        duration: 1.0,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.work-main-heading',
-          start: 'top 90%',
+          start: 'top 100%',
+          once: true,
           invalidateOnRefresh: true,
         },
       })
@@ -147,26 +148,27 @@ export default function Work() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: 'top 88%',
+            start: 'top 100%',
+            once: true,
             invalidateOnRefresh: true,
           },
         })
         tl.from(section.querySelector('.work-section-header'), {
           opacity: 0,
-          y: 18,
-          duration: 0.6,
+          y: 36,
+          duration: 0.75,
           ease: 'power3.out',
         }).from(
           section.querySelectorAll('.work-card'),
           {
             opacity: 0,
-            y: 44,
-            duration: 0.8,
+            y: 80,
+            duration: 1.0,
             ease: 'power3.out',
-            stagger: 0.07,
+            stagger: 0.09,
             force3D: true,
           },
-          '-=0.3',
+          '-=0.4',
         )
       })
     }, sectionRef)

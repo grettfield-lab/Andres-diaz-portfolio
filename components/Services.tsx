@@ -40,13 +40,16 @@ export default function Services() {
     const ctx = gsap.context(() => {
       gsap.from('.service-row', {
         opacity: 0,
-        x: -32,
-        duration: 0.7,
+        x: -64,
+        y: 20,
+        duration: 0.9,
         ease: 'power3.out',
-        stagger: 0.1,
+        stagger: 0.12,
         scrollTrigger: {
           trigger: '.services-list',
-          start: 'top 80%',
+          start: 'top 100%',
+          once: true,
+          invalidateOnRefresh: true,
         },
       })
     }, sectionRef)

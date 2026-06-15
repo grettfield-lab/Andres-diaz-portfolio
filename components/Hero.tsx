@@ -25,30 +25,30 @@ export default function Hero() {
         const tl = gsap.timeline({ delay: 0.15 })
         tl.from(descriptorRef.current, {
           opacity: 0,
-          y: 12,
-          duration: 0.7,
+          y: 24,
+          duration: 0.85,
           ease: 'power3.out',
         })
           .from(
             headlineRef.current?.querySelectorAll('.hero-line') ?? [],
-            { opacity: 0, y: 72, duration: 1, ease: 'power3.out', stagger: 0.1 },
-            '-=0.35',
+            { opacity: 0, y: 110, duration: 1.15, ease: 'power3.out', stagger: 0.12 },
+            '-=0.4',
           )
-          .from(ctaRef.current, { opacity: 0, y: 14, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+          .from(ctaRef.current, { opacity: 0, y: 24, duration: 0.8, ease: 'power3.out' }, '-=0.5')
           .from(
             imgRef.current,
-            { opacity: 0, scale: 1.05, duration: 1.1, ease: 'power3.out' },
-            '-=0.8',
+            { opacity: 0, scale: 1.14, duration: 1.4, ease: 'power3.out' },
+            '-=1.0',
           )
 
         gsap.to(imgRef.current, {
-          yPercent: 10,
+          yPercent: 28,
           ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top top',
             end: 'bottom top',
-            scrub: 1.2,
+            scrub: 1.8,
             invalidateOnRefresh: true,
           },
         })

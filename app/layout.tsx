@@ -3,6 +3,7 @@ import { Outfit, Space_Mono } from 'next/font/google'
 import './globals.css'
 import TransitionProvider from '@/components/TransitionProvider'
 import DotField from '@/components/DotField'
+import ScrollFade from '@/components/ScrollFade'
 import BackToTop from '@/components/BackToTop'
 
 const outfit = Outfit({
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${outfit.variable} ${spaceMono.variable}`}>
       <body>
         <DotField />
+        <ScrollFade />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <TransitionProvider>{children}</TransitionProvider>
         </div>

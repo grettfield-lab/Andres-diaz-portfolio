@@ -22,38 +22,42 @@ export default function Contact() {
     const ctx = gsap.context(() => {
       gsap.from('.ct-heading-line', {
         opacity: 0,
-        y: 56,
+        y: 96,
         duration: 1,
         ease: 'power3.out',
         stagger: 0.1,
         scrollTrigger: {
           trigger: '.ct-heading',
-          start: 'top 88%',
+          start: 'top 100%',
+          once: true,
           invalidateOnRefresh: true,
         },
       })
 
       gsap.from('.ct-info-item', {
         opacity: 0,
-        y: 18,
-        duration: 0.7,
+        y: 36,
+        duration: 0.85,
         ease: 'power3.out',
-        stagger: 0.08,
+        stagger: 0.1,
         scrollTrigger: {
           trigger: '.ct-info-row',
-          start: 'top 90%',
+          start: 'top 100%',
+          once: true,
           invalidateOnRefresh: true,
         },
       })
 
       gsap.from('.ct-cta-btn', {
         opacity: 0,
-        y: 20,
-        duration: 0.7,
+        y: 36,
+        scale: 0.96,
+        duration: 0.85,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.ct-cta-btn',
-          start: 'top 94%',
+          start: 'top 100%',
+          once: true,
           invalidateOnRefresh: true,
         },
       })
@@ -99,7 +103,7 @@ export default function Contact() {
       <section
         ref={sectionRef}
         id="contact"
-        className="bg-surface py-32 md:py-44 px-6 md:px-10"
+        className="bg-surface/80 py-32 md:py-44 px-6 md:px-10"
         aria-label="Contact"
       >
         <div className="max-w-[1400px] mx-auto">

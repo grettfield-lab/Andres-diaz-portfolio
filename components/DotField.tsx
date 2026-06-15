@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
-const SPACING = 38
-const DOT_R   = 1.4
+const SPACING = 22
+const DOT_R   = 0.75
 const REPEL_R = 135
 const REPEL_K = 8500
 const SPRING  = 0.052

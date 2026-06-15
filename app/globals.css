@@ -13,7 +13,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -48,9 +48,6 @@ img {
   max-width: 100%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-}
 
 /* Offset anchor scroll so fixed nav doesn't cover the target */
 [id] {

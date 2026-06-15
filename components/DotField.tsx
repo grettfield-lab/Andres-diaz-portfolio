@@ -3,11 +3,11 @@
 import { useEffect, useRef } from 'react'
 
 const SPACING = 38
-const DOT_R = 1.2
+const DOT_R   = 1.4
 const REPEL_R = 135
 const REPEL_K = 8500
-const SPRING = 0.052
-const DAMP = 0.78
+const SPRING  = 0.052
+const DAMP    = 0.78
 
 export default function DotField() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -19,16 +19,19 @@ export default function DotField() {
     if (!ctx) return
 
     interface Dot { rx: number; ry: number; x: number; y: number; vx: number; vy: number }
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let W = 0, H = 0
     let dots: Dot[] = []
     let mx = -9999, my = -9999
-    let raf: number
+    let raf = 0
 
     const build = () => {
       W = window.innerWidth
       H = window.innerHeight
-      canvas.width = W
-      canvas.height = H
+      canvas.width  = Math.round(W * dpr)
+      canvas.height = Math.round(H * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       dots = []
       for (let ry = 0; ry <= H + SPACING; ry += SPACING)
         for (let rx = 0; rx <= W + SPACING; rx += SPACING)
@@ -36,8 +39,7 @@ export default function DotField() {
     }
 
     const drawStatic = () => {
-      ctx.fillStyle = '#0A0A0A'
-      ctx.fillRect(0, 0, W, H)
+      ctx.clearRect(0, 0, W, H)
       ctx.fillStyle = 'rgba(240,237,232,0.11)'
       for (const d of dots) {
         ctx.beginPath()
@@ -47,8 +49,7 @@ export default function DotField() {
     }
 
     const tick = () => {
-      ctx.fillStyle = '#0A0A0A'
-      ctx.fillRect(0, 0, W, H)
+      ctx.clearRect(0, 0, W, H)
       ctx.fillStyle = 'rgba(240,237,232,0.11)'
 
       for (const d of dots) {
@@ -78,15 +79,23 @@ export default function DotField() {
       raf = requestAnimationFrame(tick)
     }
 
-    const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY }
-    const onLeave = () => { mx = -9999; my = -9999 }
+    const onPointerMove = (e: PointerEvent) => {
+      mx = e.clientX
+      my = e.clientY
+    }
+    const onPointerLeave = () => { mx = -9999; my = -9999 }
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const onResize = () => {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(() => {
+        cancelAnimationFrame(raf)
         build()
-        if (prefersReduced) drawStatic()
+        if (prefersReduced) {
+          drawStatic()
+        } else {
+          raf = requestAnimationFrame(tick)
+        }
       }, 200)
     }
 
@@ -98,8 +107,8 @@ export default function DotField() {
       drawStatic()
     } else {
       raf = requestAnimationFrame(tick)
-      window.addEventListener('mousemove', onMove, { passive: true })
-      document.addEventListener('mouseleave', onLeave)
+      document.addEventListener('pointermove', onPointerMove, { passive: true })
+      document.addEventListener('pointerleave', onPointerLeave)
     }
 
     window.addEventListener('resize', onResize)
@@ -107,8 +116,8 @@ export default function DotField() {
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
-      window.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseleave', onLeave)
+      document.removeEventListener('pointermove', onPointerMove)
+      document.removeEventListener('pointerleave', onPointerLeave)
       window.removeEventListener('resize', onResize)
     }
   }, [])

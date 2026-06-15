@@ -24,7 +24,9 @@ export default function About() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.about-manifesto',
-          start: 'top 82%',
+          start: 'top 100%',
+          once: true,
+          invalidateOnRefresh: true,
         },
       })
 
@@ -36,7 +38,9 @@ export default function About() {
         stagger: 0.15,
         scrollTrigger: {
           trigger: '.about-body',
-          start: 'top 80%',
+          start: 'top 100%',
+          once: true,
+          invalidateOnRefresh: true,
         },
       })
 
@@ -47,7 +51,9 @@ export default function About() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.about-body',
-          start: 'top 75%',
+          start: 'top 100%',
+          once: true,
+          invalidateOnRefresh: true,
         },
       })
 
@@ -58,7 +64,9 @@ export default function About() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: '.about-body',
-          start: 'top 82%',
+          start: 'top 100%',
+          once: true,
+          invalidateOnRefresh: true,
         },
       })
     }, sectionRef)
@@ -70,7 +78,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="bg-surface py-24 md:py-36 px-6 md:px-10"
+      className="bg-surface/80 py-24 md:py-36 px-6 md:px-10"
       aria-label="About Andres Díaz"
     >
       {/* Manifesto */}

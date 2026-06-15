@@ -18,6 +18,7 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [workDropdown, setWorkDropdown] = useState(false)
   const [mobileWorkOpen, setMobileWorkOpen] = useState(false)
+  const [navOnLight, setNavOnLight] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const mobileOverlayRef = useRef<HTMLDivElement>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)
@@ -42,6 +43,25 @@ export default function Nav() {
     })
     return () => st.kill()
   }, [])
+
+  // Detect if nav is over a light-background section (sections tagged data-nav-light)
+  useEffect(() => {
+    const check = () => {
+      const lightSections = document.querySelectorAll('[data-nav-light]')
+      let isLight = false
+      for (const section of lightSections) {
+        const rect = section.getBoundingClientRect()
+        if (rect.top <= 72 && rect.bottom >= 0) {
+          isLight = true
+          break
+        }
+      }
+      setNavOnLight(isLight)
+    }
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [pathname])
 
   useEffect(() => {
     const overlay = mobileOverlayRef.current
@@ -131,6 +151,11 @@ export default function Nav() {
     setMobileWorkOpen(false)
   }
 
+  const linkColor = navOnLight
+    ? 'text-[#0A0A0A]/60 hover:text-[#0A0A0A]'
+    : 'text-muted hover:text-primary'
+  const logoColor = navOnLight ? 'text-[#0A0A0A]' : 'text-primary'
+
   return (
     <>
       <nav
@@ -147,7 +172,7 @@ export default function Nav() {
         <div className="flex-1">
           <Link
             href="/"
-            className="font-mono text-[17px] tracking-[0.2em] text-primary font-bold uppercase hover:text-accent transition-colors duration-300"
+            className={`font-mono text-[17px] tracking-[0.2em] font-bold uppercase hover:text-accent transition-colors duration-300 ${logoColor}`}
             aria-label="Home — Andres Díaz"
           >
             AD
@@ -163,7 +188,7 @@ export default function Nav() {
           >
             <button
               ref={workBtnRef}
-              className="flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase text-muted hover:text-primary transition-colors duration-300"
+              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
               aria-expanded={workDropdown}
               aria-haspopup="menu"
             >
@@ -203,7 +228,7 @@ export default function Nav() {
             <Link
               ref={aboutLinkRef}
               href="/about"
-              className="font-mono text-[15px] tracking-[0.15em] uppercase text-muted hover:text-primary transition-colors duration-300"
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
             >
               About
             </Link>
@@ -213,7 +238,7 @@ export default function Nav() {
             <Link
               ref={contactLinkRef}
               href="/contact"
-              className="font-mono text-[15px] tracking-[0.15em] uppercase text-muted hover:text-primary transition-colors duration-300"
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
             >
               Contact
             </Link>
@@ -225,14 +250,15 @@ export default function Nav() {
           <Link
             href={isHome ? '#contact' : '/contact'}
             className={[
-              'hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase text-primary border border-primary/20 px-4 py-2 hover:border-accent hover:text-accent transition-all duration-500',
+              `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 hover:border-accent hover:text-accent transition-all duration-500`,
+              navOnLight ? 'text-[#0A0A0A] border border-[#0A0A0A]/20' : 'text-primary border border-primary/20',
               scrolled ? 'opacity-0 pointer-events-none translate-y-[-4px]' : 'opacity-100 pointer-events-auto translate-y-0',
             ].join(' ')}
           >
             Start a project
           </Link>
           <button
-            className="text-primary p-1"
+            className={`p-1 transition-colors duration-300 ${navOnLight ? 'text-[#0A0A0A]' : 'text-primary'}`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}

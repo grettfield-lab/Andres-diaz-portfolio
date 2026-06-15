@@ -19,18 +19,22 @@ export default function ContactPageContent() {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.2 })
-      tl.from('.cpc-label', { opacity: 0, y: 14, duration: 0.7, ease: 'power3.out' })
-        .from(
-          '.cpc-heading-line',
-          { opacity: 0, y: 56, duration: 1, ease: 'power3.out', stagger: 0.12 },
-          '-=0.4',
-        )
-        .from(
-          '.cpc-meta',
-          { opacity: 0, y: 24, duration: 0.8, ease: 'power3.out', stagger: 0.1 },
-          '-=0.5',
-        )
-        .from('.cpc-form', { opacity: 0, y: 36, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+      tl.fromTo('.cpc-label',
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out' }
+      ).fromTo('.cpc-heading-line',
+        { autoAlpha: 0, y: 48 },
+        { autoAlpha: 1, y: 0, duration: 0.95, ease: 'power3.out', stagger: 0.11 },
+        '-=0.4'
+      ).fromTo('.cpc-meta',
+        { autoAlpha: 0, y: 20 },
+        { autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.09 },
+        '-=0.5'
+      ).fromTo('.cpc-form',
+        { autoAlpha: 0, y: 28 },
+        { autoAlpha: 1, y: 0, duration: 0.85, ease: 'power3.out' },
+        '-=0.6'
+      )
     }, wrapperRef)
 
     return () => ctx.revert()
@@ -42,7 +46,7 @@ export default function ContactPageContent() {
   }
 
   const inputClass =
-    'bg-surface-2 border border-white/10 text-primary font-display text-[18px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 w-full'
+    'bg-surface-2 border border-white/10 rounded text-primary placeholder:text-primary/25 font-display text-[18px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 w-full'
   const labelClass = 'font-mono text-[13px] tracking-[0.18em] uppercase text-muted'
 
   return (
@@ -116,11 +120,11 @@ export default function ContactPageContent() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="flex flex-col gap-2">
                       <label htmlFor="cp-name" className={labelClass}>Name *</label>
-                      <input type="text" id="cp-name" name="name" required autoComplete="name" className={inputClass} />
+                      <input type="text" id="cp-name" name="name" required autoComplete="name" placeholder="María García" className={inputClass} />
                     </div>
                     <div className="flex flex-col gap-2">
                       <label htmlFor="cp-email" className={labelClass}>Email *</label>
-                      <input type="email" id="cp-email" name="email" required autoComplete="email" className={inputClass} />
+                      <input type="email" id="cp-email" name="email" required autoComplete="email" placeholder="maria@ejemplo.com" className={inputClass} />
                     </div>
                   </div>
 
@@ -129,20 +133,32 @@ export default function ContactPageContent() {
                     <label htmlFor="cp-phone" className={labelClass}>
                       Phone <span className="normal-case text-muted/60">(optional)</span>
                     </label>
-                    <input
-                      type="tel"
-                      id="cp-phone"
-                      name="phone"
-                      autoComplete="tel"
-                      className={inputClass}
-                      placeholder="+57 300 000 0000"
-                    />
+                    <div className="flex gap-0">
+                      <select
+                        name="phone-code"
+                        defaultValue="+57"
+                        className="bg-surface-2 border border-white/10 border-r-0 rounded-l text-primary font-mono text-[14px] tracking-[0.05em] px-3 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 shrink-0 cursor-pointer appearance-none"
+                        style={{ colorScheme: 'dark' }}
+                      >
+                        {['+57','+1','+44','+34','+52','+54','+58','+51','+56','+593','+55','+598'].map(c => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        id="cp-phone"
+                        name="phone"
+                        autoComplete="tel"
+                        placeholder="300 000 0000"
+                        className="bg-surface-2 border border-white/10 rounded-r text-primary placeholder:text-primary/25 font-display text-[18px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 w-full"
+                      />
+                    </div>
                   </div>
 
                   {/* Client type toggle */}
                   <div className="flex flex-col gap-3">
                     <p className={labelClass}>Type of client *</p>
-                    <div className="grid grid-cols-2 border border-white/10">
+                    <div className="grid grid-cols-2 border border-white/10 rounded overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setClientType('individual')}
@@ -179,6 +195,7 @@ export default function ContactPageContent() {
                         id="cp-company"
                         name="company"
                         required
+                        placeholder="Empresa S.A.S."
                         className={inputClass}
                         autoFocus
                       />
@@ -219,6 +236,7 @@ export default function ContactPageContent() {
                       name="message"
                       required
                       rows={6}
+                      placeholder="Cuéntame sobre tu proyecto: qué tienes en mente, cuándo lo necesitas, dónde será..."
                       className={`${inputClass} resize-none`}
                     />
                   </div>
@@ -271,7 +289,7 @@ export default function ContactPageContent() {
 
                   <button
                     type="submit"
-                    className="w-full bg-primary text-bg font-mono text-[14px] tracking-[0.2em] uppercase py-4 hover:bg-accent hover:text-primary transition-colors duration-300 active:scale-[0.99]"
+                    className="w-full bg-primary text-bg font-mono text-[14px] tracking-[0.2em] uppercase py-4 rounded hover:bg-accent hover:text-primary transition-colors duration-300 active:scale-[0.99]"
                   >
                     Send message
                   </button>

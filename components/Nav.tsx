@@ -208,7 +208,7 @@ export default function Nav() {
               ].join(' ')}
               role="menu"
             >
-              <div className="bg-surface border border-white/10 py-1">
+              <div className="bg-surface border border-white/10 rounded-lg py-1 overflow-hidden">
                 {workLinks.map((link) => (
                   <Link
                     key={link.href}

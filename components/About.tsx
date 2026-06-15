@@ -17,58 +17,37 @@ export default function About() {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      gsap.from('.about-manifesto', {
-        opacity: 0,
-        y: 80,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.about-manifesto',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.about-manifesto',
+        { autoAlpha: 0, y: 56 },
+        {
+          autoAlpha: 1, y: 0, duration: 1.1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.about-manifesto', start: 'top 88%', once: true },
+        }
+      )
 
-      gsap.from('.about-bio p', {
-        opacity: 0,
-        y: 36,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: '.about-body',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.about-bio p',
+        { autoAlpha: 0, y: 28 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.85, ease: 'power3.out', stagger: 0.12,
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+        }
+      )
 
-      gsap.from('.about-bio a', {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.about-body',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.about-bio a',
+        { autoAlpha: 0, y: 16 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+        }
+      )
 
-      gsap.from('.about-portrait', {
-        opacity: 0,
-        scale: 1.06,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.about-body',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.about-portrait',
+        { autoAlpha: 0, scale: 1.04 },
+        {
+          autoAlpha: 1, scale: 1, duration: 1.1, ease: 'power3.out',
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+        }
+      )
     }, sectionRef)
 
     return () => ctx.revert()

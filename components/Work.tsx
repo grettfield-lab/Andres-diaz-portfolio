@@ -131,64 +131,33 @@ export default function Work() {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      gsap.from('.work-main-heading', {
-        opacity: 0,
-        y: 56,
-        duration: 1.0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.work-main-heading',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.work-main-heading',
+        { autoAlpha: 0, y: 36 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: '.work-main-heading', start: 'top 88%', once: true },
+        }
+      )
 
       gsap.utils.toArray<HTMLElement>('.work-category').forEach((section) => {
         const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 100%',
-            once: true,
-            invalidateOnRefresh: true,
-          },
+          scrollTrigger: { trigger: section, start: 'top 88%', once: true, invalidateOnRefresh: true },
         })
-        tl.from(section.querySelector('.work-section-header'), {
-          opacity: 0,
-          y: 36,
-          duration: 0.75,
-          ease: 'power3.out',
-        }).from(
-          section.querySelectorAll('.work-card'),
-          { y: 64, duration: 0.9, ease: 'power3.out', stagger: 0.09, force3D: true },
-          '-=0.4',
-        ).from(
+        tl.fromTo(
+          section.querySelector('.work-section-header'),
+          { autoAlpha: 0, y: 20 },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+        ).fromTo(
+          section.querySelectorAll('.work-image'),
+          { autoAlpha: 0, y: 36 },
+          { autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.08 },
+          '-=0.3'
+        ).fromTo(
           section.querySelectorAll('.work-caption'),
-          { opacity: 0, y: 12, duration: 0.6, ease: 'power3.out', stagger: 0.09 },
-          '<',
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.07 },
+          '<'
         )
-
-        // Per-image direction-aware clip-path reveal
-        section.querySelectorAll<HTMLElement>('.work-image').forEach(img => {
-          gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 })
-          ScrollTrigger.create({
-            trigger: img,
-            start: 'top 92%',
-            onEnter: () => gsap.to(img, {
-              clipPath: 'inset(0 0 0% 0)', opacity: 1,
-              duration: 0.85, ease: 'power3.out', overwrite: 'auto',
-            }),
-            onEnterBack: () => {
-              gsap.set(img, { clipPath: 'inset(100% 0 0 0)' })
-              gsap.to(img, {
-                clipPath: 'inset(0 0 0% 0)', opacity: 1,
-                duration: 0.85, ease: 'power3.out', overwrite: 'auto',
-              })
-            },
-            onLeave:     () => gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 }),
-            onLeaveBack: () => gsap.set(img, { clipPath: 'inset(100% 0 0 0)', opacity: 0 }),
-          })
-        })
       })
     }, sectionRef)
 

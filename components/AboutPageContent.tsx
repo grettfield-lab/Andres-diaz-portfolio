@@ -36,83 +36,70 @@ export default function AboutPageContent() {
 
     const ctx = gsap.context(() => {
       // Hero entrance
-      gsap.from('.apc-hero-label', {
-        opacity: 0,
-        y: 28,
-        duration: 0.9,
-        ease: 'power3.out',
-        delay: 0.3,
-      })
-      gsap.from('.apc-hero-name', {
-        opacity: 0,
-        y: 110,
-        duration: 1.2,
-        ease: 'power3.out',
-        delay: 0.45,
-      })
-      gsap.from('.apc-hero-img', {
-        opacity: 0,
-        scale: 1.12,
-        duration: 1.8,
-        ease: 'power3.out',
-        delay: 0.1,
-      })
+      gsap.fromTo('.apc-hero-label',
+        { autoAlpha: 0, y: 20 },
+        { autoAlpha: 1, y: 0, duration: 0.85, ease: 'power3.out', delay: 0.3 }
+      )
+      gsap.fromTo('.apc-hero-name',
+        { autoAlpha: 0, y: 80 },
+        { autoAlpha: 1, y: 0, duration: 1.1, ease: 'power3.out', delay: 0.45 }
+      )
+      gsap.fromTo('.apc-hero-img',
+        { autoAlpha: 0, scale: 1.08 },
+        { autoAlpha: 1, scale: 1, duration: 1.6, ease: 'power3.out', delay: 0.1 }
+      )
 
       // Bio section
-      gsap.from('.apc-bio-head', {
-        opacity: 0,
-        x: -72,
-        duration: 1.0,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
-      gsap.from('.apc-bio-para', {
-        opacity: 0,
-        y: 56,
-        duration: 0.95,
-        ease: 'power3.out',
-        stagger: 0.16,
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
+      gsap.fromTo('.apc-bio-head',
+        { autoAlpha: 0, x: -48 },
+        {
+          autoAlpha: 1, x: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+        }
+      )
+      gsap.fromTo('.apc-bio-para',
+        { autoAlpha: 0, y: 40 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.85, ease: 'power3.out', stagger: 0.13,
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+        }
+      )
 
       // Manifesto
-      gsap.from('.apc-manifesto-line', {
-        opacity: 0,
-        y: 90,
-        duration: 1.2,
-        ease: 'power3.out',
-        stagger: 0.2,
-        scrollTrigger: { trigger: '.apc-manifesto', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
+      gsap.fromTo('.apc-manifesto-line',
+        { autoAlpha: 0, y: 64 },
+        {
+          autoAlpha: 1, y: 0, duration: 1.1, ease: 'power3.out', stagger: 0.16,
+          scrollTrigger: { trigger: '.apc-manifesto', start: 'top 88%', once: true },
+        }
+      )
 
       // Credits
-      gsap.from('.apc-credit-row', {
-        opacity: 0,
-        x: -52,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: '.apc-credits', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
+      gsap.fromTo('.apc-credit-row',
+        { autoAlpha: 0, x: -36 },
+        {
+          autoAlpha: 1, x: 0, duration: 0.7, ease: 'power3.out', stagger: 0.07,
+          scrollTrigger: { trigger: '.apc-credits', start: 'top 88%', once: true },
+        }
+      )
 
       // Awards
-      gsap.from('.apc-award-row', {
-        opacity: 0,
-        x: -52,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.07,
-        scrollTrigger: { trigger: '.apc-awards', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
+      gsap.fromTo('.apc-award-row',
+        { autoAlpha: 0, x: -36 },
+        {
+          autoAlpha: 1, x: 0, duration: 0.7, ease: 'power3.out', stagger: 0.06,
+          scrollTrigger: { trigger: '.apc-awards', start: 'top 88%', once: true },
+        }
+      )
 
       // Portrait
-      gsap.from('.apc-portrait', {
-        opacity: 0,
-        scale: 1.08,
-        duration: 1.4,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top 100%', once: true, invalidateOnRefresh: true },
-      })
+      gsap.fromTo('.apc-portrait',
+        { autoAlpha: 0, scale: 1.04 },
+        {
+          autoAlpha: 1, scale: 1, duration: 1.2, ease: 'power3.out',
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+        }
+      )
     }, wrapperRef)
 
     return () => ctx.revert()

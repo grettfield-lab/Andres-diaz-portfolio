@@ -67,51 +67,31 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      gsap.from('.wg-back', {
-        opacity: 0,
-        x: -16,
-        duration: 0.6,
-        ease: 'power3.out',
-        delay: 0.1,
-      })
+      gsap.fromTo('.wg-back',
+        { autoAlpha: 0, x: -14 },
+        { autoAlpha: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: 0.1 }
+      )
 
-      gsap.from('.wg-heading', {
-        opacity: 0,
-        y: 72,
-        duration: 1.1,
-        ease: 'power3.out',
-        delay: 0.2,
-      })
+      gsap.fromTo('.wg-heading',
+        { autoAlpha: 0, y: 56 },
+        { autoAlpha: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.2 }
+      )
 
-      // Per-image direction-aware clip-path reveal
-      gsap.utils.toArray<HTMLElement>('.wg-image').forEach(img => {
-        gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 })
-        ScrollTrigger.create({
-          trigger: img,
-          start: 'top 92%',
-          onEnter: () => gsap.to(img, {
-            clipPath: 'inset(0 0 0% 0)', opacity: 1,
-            duration: 0.85, ease: 'power3.out', overwrite: 'auto',
-          }),
-          onEnterBack: () => {
-            gsap.set(img, { clipPath: 'inset(100% 0 0 0)' })
-            gsap.to(img, {
-              clipPath: 'inset(0 0 0% 0)', opacity: 1,
-              duration: 0.85, ease: 'power3.out', overwrite: 'auto',
-            })
-          },
-          onLeave:     () => gsap.set(img, { clipPath: 'inset(0 0 100% 0)', opacity: 0 }),
-          onLeaveBack: () => gsap.set(img, { clipPath: 'inset(100% 0 0 0)', opacity: 0 }),
-        })
-      })
+      gsap.fromTo('.wg-image',
+        { autoAlpha: 0, y: 32 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.07,
+          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+        }
+      )
 
-      // Caption text stagger
-      gsap.from('.wg-caption', {
-        opacity: 0, y: 16, duration: 0.65, ease: 'power3.out', stagger: 0.07,
-        scrollTrigger: {
-          trigger: '.wg-grid', start: 'top 92%', once: true, invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.wg-caption',
+        { autoAlpha: 0, y: 12 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
+          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+        }
+      )
     }, sectionRef)
 
     return () => ctx.revert()

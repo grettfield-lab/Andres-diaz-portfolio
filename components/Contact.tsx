@@ -20,47 +20,29 @@ export default function Contact() {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      gsap.from('.ct-heading-line', {
-        opacity: 0,
-        y: 96,
-        duration: 1,
-        ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: '.ct-heading',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.ct-heading-line',
+        { autoAlpha: 0, y: 72 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.95, ease: 'power3.out', stagger: 0.1,
+          scrollTrigger: { trigger: '.ct-heading', start: 'top 88%', once: true },
+        }
+      )
 
-      gsap.from('.ct-info-item', {
-        opacity: 0,
-        y: 36,
-        duration: 0.85,
-        ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: '.ct-info-row',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.ct-info-item',
+        { autoAlpha: 0, y: 28 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.09,
+          scrollTrigger: { trigger: '.ct-info-row', start: 'top 88%', once: true },
+        }
+      )
 
-      gsap.from('.ct-cta-btn', {
-        opacity: 0,
-        y: 36,
-        scale: 0.96,
-        duration: 0.85,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.ct-cta-btn',
-          start: 'top 100%',
-          once: true,
-          invalidateOnRefresh: true,
-        },
-      })
+      gsap.fromTo('.ct-cta-btn',
+        { autoAlpha: 0, y: 28, scale: 0.97 },
+        {
+          autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: '.ct-cta-btn', start: 'top 92%', once: true },
+        }
+      )
     }, sectionRef)
 
     return () => ctx.revert()
@@ -194,7 +176,7 @@ export default function Contact() {
           {/* Card */}
           <div
             ref={cardRef}
-            className="relative z-10 bg-surface border border-white/10 w-full max-w-[540px] p-8 md:p-12"
+            className="relative z-10 bg-surface border border-white/10 rounded-2xl w-full max-w-[540px] p-8 md:p-12"
           >
             {/* Close */}
             <button
@@ -226,7 +208,7 @@ export default function Contact() {
                         htmlFor="modal-name"
                         className="font-mono text-[14px] tracking-[0.18em] uppercase text-muted"
                       >
-                        Name
+                        Name *
                       </label>
                       <input
                         type="text"
@@ -234,7 +216,8 @@ export default function Contact() {
                         name="name"
                         required
                         autoComplete="name"
-                        className="bg-surface-2 border border-white/10 text-primary font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300"
+                        placeholder="María García"
+                        className="bg-surface-2 border border-white/10 rounded text-primary placeholder:text-primary/25 font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300"
                       />
                     </div>
 
@@ -243,7 +226,7 @@ export default function Contact() {
                         htmlFor="modal-email"
                         className="font-mono text-[14px] tracking-[0.18em] uppercase text-muted"
                       >
-                        Email
+                        Email *
                       </label>
                       <input
                         type="email"
@@ -251,7 +234,8 @@ export default function Contact() {
                         name="email"
                         required
                         autoComplete="email"
-                        className="bg-surface-2 border border-white/10 text-primary font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300"
+                        placeholder="maria@ejemplo.com"
+                        className="bg-surface-2 border border-white/10 rounded text-primary placeholder:text-primary/25 font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300"
                       />
                     </div>
                   </div>
@@ -261,20 +245,21 @@ export default function Contact() {
                       htmlFor="modal-message"
                       className="font-mono text-[14px] tracking-[0.18em] uppercase text-muted"
                     >
-                      Tell me about your project
+                      Tell me about your project{' '}
+                      <span className="normal-case text-muted/50">(optional)</span>
                     </label>
                     <textarea
                       id="modal-message"
                       name="message"
-                      required
                       rows={5}
-                      className="bg-surface-2 border border-white/10 text-primary font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 resize-none"
+                      placeholder="Hola, tengo un proyecto de fotografía/cinematografía..."
+                      className="bg-surface-2 border border-white/10 rounded text-primary placeholder:text-primary/25 font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-primary text-bg font-mono text-[14px] tracking-[0.2em] uppercase py-4 hover:bg-accent hover:text-primary transition-colors duration-300 active:scale-[0.99]"
+                    className="w-full bg-primary text-bg font-mono text-[14px] tracking-[0.2em] uppercase py-4 rounded hover:bg-accent hover:text-primary transition-colors duration-300 active:scale-[0.99]"
                   >
                     Send message
                   </button>

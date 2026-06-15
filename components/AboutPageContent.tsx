@@ -35,6 +35,19 @@ export default function AboutPageContent() {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
+      // Parallax on hero background image
+      gsap.to('.apc-hero-img',  {
+        yPercent: 22,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.apc-hero-img',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.8,
+          invalidateOnRefresh: true,
+        },
+      })
+
       // Hero entrance
       gsap.fromTo('.apc-hero-label',
         { autoAlpha: 0, y: 20 },
@@ -190,7 +203,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* ── Manifesto ── */}
-      <section className="apc-manifesto bg-surface/80 py-28 md:py-40 px-6 md:px-10">
+      <section className="apc-manifesto bg-surface/75 py-28 md:py-40 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p
             className="font-display font-black leading-[0.88] tracking-normal text-primary"
@@ -235,7 +248,7 @@ export default function AboutPageContent() {
       </section>
 
       {/* ── Awards & Nominations ── */}
-      <section className="apc-awards bg-surface/80 py-24 md:py-32 px-6 md:px-10">
+      <section className="apc-awards bg-surface/75 py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-14">
             Awards & Nominations

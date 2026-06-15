@@ -57,7 +57,7 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="bg-surface/80 py-24 md:py-36 px-6 md:px-10"
+      className="bg-surface/75 py-24 md:py-36 px-6 md:px-10"
       aria-label="About Andres Díaz"
     >
       {/* Manifesto */}

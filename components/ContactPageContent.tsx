@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronDown } from 'lucide-react'
+import DatePicker from './DatePicker'
 
 export default function ContactPageContent() {
   const [submitted, setSubmitted] = useState(false)
   const [clientType, setClientType] = useState<'individual' | 'company'>('individual')
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [hasDate, setHasDate] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -270,15 +272,17 @@ export default function ContactPageContent() {
 
                     {hasDate && (
                       <div className="flex flex-col gap-2 pl-8">
-                        <label htmlFor="cp-date" className={labelClass}>Project date *</label>
+                        <label className={labelClass}>Project date *</label>
+                        {/* Hidden input carries the value for form submission */}
                         <input
-                          type="date"
-                          id="cp-date"
+                          type="hidden"
                           name="date"
-                          required
-                          min={new Date().toISOString().split('T')[0]}
-                          className={`${inputClass} cursor-pointer`}
-                          style={{ colorScheme: 'dark' }}
+                          value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                        />
+                        <DatePicker
+                          value={selectedDate}
+                          onChange={setSelectedDate}
+                          min={new Date()}
                         />
                         <p className="font-mono text-[12px] tracking-[0.1em] text-muted/60 uppercase">
                           Selecting a date sends a booking request — not a confirmation.

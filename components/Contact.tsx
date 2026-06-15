@@ -85,7 +85,7 @@ export default function Contact() {
       <section
         ref={sectionRef}
         id="contact"
-        className="bg-surface/80 py-32 md:py-44 px-6 md:px-10"
+        className="bg-surface/75 py-32 md:py-44 px-6 md:px-10"
         aria-label="Contact"
       >
         <div className="max-w-[1400px] mx-auto">
@@ -251,6 +251,7 @@ export default function Contact() {
                     <textarea
                       id="modal-message"
                       name="message"
+                      required
                       rows={5}
                       placeholder="Hola, tengo un proyecto de fotografía/cinematografía..."
                       className="bg-surface-2 border border-white/10 rounded text-primary placeholder:text-primary/25 font-display text-[19px] px-4 py-3 focus:outline-none focus:border-accent/60 transition-colors duration-300 resize-none"

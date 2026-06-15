@@ -18,7 +18,6 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [workDropdown, setWorkDropdown] = useState(false)
   const [mobileWorkOpen, setMobileWorkOpen] = useState(false)
-  const [navOnLight, setNavOnLight] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const mobileOverlayRef = useRef<HTMLDivElement>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)
@@ -44,25 +43,6 @@ export default function Nav() {
     return () => st.kill()
   }, [])
 
-  // Detect if nav is over a light-background section (sections tagged data-nav-light)
-  useEffect(() => {
-    const check = () => {
-      const lightSections = document.querySelectorAll('[data-nav-light]')
-      let isLight = false
-      for (const section of lightSections) {
-        const rect = section.getBoundingClientRect()
-        if (rect.top <= 72 && rect.bottom >= 0) {
-          isLight = true
-          break
-        }
-      }
-      setNavOnLight(isLight)
-    }
-    check()
-    window.addEventListener('scroll', check, { passive: true })
-    return () => window.removeEventListener('scroll', check)
-  }, [pathname])
-
   useEffect(() => {
     const overlay = mobileOverlayRef.current
     if (!overlay) return
@@ -86,7 +66,6 @@ export default function Nav() {
     }
   }, [mobileOpen])
 
-  // Scroll progress bar — full width on home, link-width on sub-pages
   useEffect(() => {
     const isHome = pathname === '/'
     const nav = navRef.current
@@ -105,7 +84,6 @@ export default function Nav() {
     const positionLine = () => {
       const activeEl = getActiveEl()
       if (!activeEl || activeEl.offsetParent === null) {
-        // mobile or no match → full width
         container.style.left = '0px'
         container.style.right = '0px'
         container.style.removeProperty('width')
@@ -151,36 +129,40 @@ export default function Nav() {
     setMobileWorkOpen(false)
   }
 
-  const linkColor = navOnLight
-    ? 'text-[#0A0A0A]/60 hover:text-[#0A0A0A]'
-    : 'text-muted hover:text-primary'
-  const logoColor = navOnLight ? 'text-[#0A0A0A]' : 'text-primary'
+  // All interactive nav items use white + mix-blend-difference
+  // so they invert against any background for maximum legibility
+  const itemClass = 'text-white mix-blend-difference'
 
   return (
     <>
       <nav
         ref={navRef}
-        className={[
-          'fixed top-0 left-0 right-0 z-[9000] flex items-center px-6 md:px-10 transition-all duration-500',
-          'h-[72px]',
-          scrolled ? 'bg-bg/85 backdrop-blur-md border-b border-white/5' : 'bg-transparent',
-        ].join(' ')}
+        className="fixed top-0 left-0 right-0 z-[9000] flex items-center px-6 md:px-10 h-[72px]"
         role="navigation"
         aria-label="Main navigation"
       >
-        {/* Logo — flex-1 left anchor */}
-        <div className="flex-1">
+        {/* Backdrop — separate layer so mix-blend works against page content */}
+        <div
+          aria-hidden="true"
+          className={[
+            'absolute inset-0 pointer-events-none transition-all duration-500',
+            scrolled ? 'bg-bg/35 backdrop-blur-3xl border-b border-white/5' : '',
+          ].join(' ')}
+        />
+
+        {/* Logo */}
+        <div className="flex-1 relative z-[1]">
           <Link
             href="/"
-            className={`font-mono text-[17px] tracking-[0.2em] font-bold uppercase hover:text-accent transition-colors duration-300 ${logoColor}`}
+            className={`font-mono text-[17px] tracking-[0.2em] font-bold uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
             aria-label="Home — Andres Díaz"
           >
             AD
           </Link>
         </div>
 
-        {/* Desktop links — visually centered */}
-        <ul className="hidden md:flex items-center gap-8 list-none" role="list">
+        {/* Desktop links */}
+        <ul className="hidden md:flex items-center gap-8 list-none relative z-[1]" role="list">
           <li
             className="relative"
             onMouseEnter={() => setWorkDropdown(true)}
@@ -188,7 +170,7 @@ export default function Nav() {
           >
             <button
               ref={workBtnRef}
-              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
+              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
               aria-expanded={workDropdown}
               aria-haspopup="menu"
             >
@@ -199,6 +181,7 @@ export default function Nav() {
                 className={`transition-transform duration-200 ${workDropdown ? 'rotate-180' : ''}`}
               />
             </button>
+            {/* Dropdown — isolation: isolate prevents mix-blend bleeding into it */}
             <div
               className={[
                 'absolute top-full left-0 pt-[2px] min-w-[200px] transition-all duration-200 z-10',
@@ -207,6 +190,7 @@ export default function Nav() {
                   : 'opacity-0 pointer-events-none -translate-y-2',
               ].join(' ')}
               role="menu"
+              style={{ isolation: 'isolate' }}
             >
               <div className="bg-surface border border-white/10 rounded-lg py-1 overflow-hidden">
                 {workLinks.map((link) => (
@@ -228,7 +212,7 @@ export default function Nav() {
             <Link
               ref={aboutLinkRef}
               href="/about"
-              className={`font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
             >
               About
             </Link>
@@ -238,29 +222,26 @@ export default function Nav() {
             <Link
               ref={contactLinkRef}
               href="/contact"
-              className={`font-mono text-[15px] tracking-[0.15em] uppercase transition-colors duration-300 ${linkColor}`}
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
             >
               Contact
             </Link>
           </li>
         </ul>
 
-        {/* Right side — CTA + hamburger, flex-1 pushes to edge */}
-        <div className="flex-1 flex items-center gap-4 justify-end">
+        {/* Right — CTA + hamburger */}
+        <div className="flex-1 flex items-center gap-4 justify-end relative z-[1]">
           <Link
             href={isHome ? '#contact' : '/contact'}
             className={[
-              `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 hover:border-accent hover:text-accent transition-all duration-500`,
-              navOnLight
-                ? 'text-[#0A0A0A] border border-[#0A0A0A]/20'
-                : 'text-primary/70 border border-primary/20',
+              `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 border border-white/40 hover:border-white hover:opacity-70 transition-all duration-500 mix-blend-difference text-white`,
               scrolled ? 'opacity-0 pointer-events-none translate-y-[-4px]' : 'opacity-100 pointer-events-auto translate-y-0',
             ].join(' ')}
           >
             Start a project
           </Link>
           <button
-            className={`p-1 transition-colors duration-300 ${navOnLight ? 'text-[#0A0A0A]' : 'text-primary'}`}
+            className={`p-1 hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
@@ -273,11 +254,11 @@ export default function Nav() {
           </button>
         </div>
 
-        {/* Scroll progress line — 1px at bottom of nav bar */}
+        {/* Scroll progress line */}
         <div
           ref={progressContainerRef}
           className="absolute bottom-0 overflow-hidden pointer-events-none"
-          style={{ height: '1px', left: 0, right: 0 }}
+          style={{ height: '1px', left: 0, right: 0, zIndex: 2 }}
         >
           <div
             ref={progressBarRef}

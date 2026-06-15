@@ -70,6 +70,7 @@ export default function Hero() {
         <p
           ref={descriptorRef}
           className="font-mono text-[14px] tracking-[0.22em] uppercase text-muted mb-8"
+          style={{ textShadow: '0 0 24px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.8)' }}
         >
           Filmmaker + Photographer
         </p>

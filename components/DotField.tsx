@@ -6,24 +6,24 @@ const SPACING = 16
 const DOT_R   = 0.65
 
 // Direct cursor repulsion
-const REPEL_R = 110
-const REPEL_K = 6500
+const REPEL_R = 75
+const REPEL_K = 2200
 
 // Spring physics
 const SPRING  = 0.052
 const DAMP    = 0.78
 
-// Ripple / wave system
-const WAVE_SPEED = 3.8   // px per frame ring expands
-const WAVE_FORCE = 1.6   // velocity impulse at wave peak
-const WAVE_WIDTH = 60    // ring band thickness (px)
-const WAVE_LIFE  = 85    // frames before ripple dies
-const WAVE_SAMPLE = 7    // spawn ripple every N frames if mouse moved
-const WAVE_MAX   = 22    // max concurrent ripples
+// Ripple / wave system — kept subtle/minimalist
+const WAVE_SPEED  = 3.2   // px per frame ring expands
+const WAVE_FORCE  = 0.28  // velocity impulse at wave peak (very gentle)
+const WAVE_WIDTH  = 32    // ring band thickness (px)
+const WAVE_LIFE   = 50    // frames before ripple dies
+const WAVE_SAMPLE = 16    // spawn ripple every N frames if mouse moved
+const WAVE_MAX    = 10    // max concurrent ripples
 
-// Base color: warm dim white  /  Hot color: full white
+// Base color: warm dim white  /  Hot color: #a8a6a5 (subtle warm gray)
 const BR = 240, BG = 237, BB = 232, BA = 0.11
-const HR = 255, HG = 255, HB = 255, HA = 0.88
+const HR = 168, HG = 166, HB = 165, HA = 0.52
 
 export default function DotField() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -160,8 +160,18 @@ export default function DotField() {
       raf = requestAnimationFrame(tick)
     }
 
-    const onPointerMove  = (e: PointerEvent) => { mx = e.clientX; my = e.clientY }
-    const onPointerLeave = () => { mx = -9999; my = -9999 }
+    // Mouse (desktop)
+    const onMouseMove  = (e: MouseEvent) => { mx = e.clientX; my = e.clientY }
+    const onMouseLeave = () => { mx = -9999; my = -9999 }
+
+    // Touch (mobile) — clientX/Y are viewport-relative, unaffected by scroll
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        mx = e.touches[0].clientX
+        my = e.touches[0].clientY
+      }
+    }
+    const onTouchEnd = () => { mx = -9999; my = -9999 }
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const onResize = () => {
@@ -182,8 +192,11 @@ export default function DotField() {
       drawStatic()
     } else {
       raf = requestAnimationFrame(tick)
-      document.addEventListener('pointermove', onPointerMove, { passive: true })
-      document.addEventListener('pointerleave', onPointerLeave)
+      document.addEventListener('mousemove', onMouseMove, { passive: true })
+      document.addEventListener('mouseleave', onMouseLeave)
+      document.addEventListener('touchmove', onTouchMove, { passive: true })
+      document.addEventListener('touchend', onTouchEnd)
+      document.addEventListener('touchcancel', onTouchEnd)
     }
 
     window.addEventListener('resize', onResize)
@@ -191,8 +204,11 @@ export default function DotField() {
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
-      document.removeEventListener('pointermove', onPointerMove)
-      document.removeEventListener('pointerleave', onPointerLeave)
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseleave', onMouseLeave)
+      document.removeEventListener('touchmove', onTouchMove)
+      document.removeEventListener('touchend', onTouchEnd)
+      document.removeEventListener('touchcancel', onTouchEnd)
       window.removeEventListener('resize', onResize)
     }
   }, [])

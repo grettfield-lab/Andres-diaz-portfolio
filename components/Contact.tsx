@@ -127,7 +127,7 @@ export default function Contact() {
               </p>
               <a
                 href="mailto:grettfield@gmail.com"
-                className="font-display text-[19px] text-primary hover:text-accent transition-colors duration-300"
+                className="font-display text-[15px] md:text-[19px] text-primary hover:text-accent transition-colors duration-300 break-all"
               >
                 grettfield@gmail.com
               </a>
@@ -137,7 +137,7 @@ export default function Contact() {
               <p className="font-mono text-[13px] tracking-[0.2em] uppercase text-muted mb-2">
                 Based in
               </p>
-              <p className="font-display text-[19px] text-primary/70">
+              <p className="font-display text-[15px] md:text-[19px] text-primary/70">
                 Bogotá D.C, Colombia
               </p>
             </div>
@@ -162,8 +162,7 @@ export default function Contact() {
           <div className="flex justify-center">
             <button
               onClick={openModal}
-              className="ct-cta-btn group inline-flex items-center gap-4 font-mono tracking-[0.22em] uppercase text-bg bg-primary px-12 py-5 hover:bg-accent transition-colors duration-300"
-              style={{ fontSize: 'clamp(11px, 1.1vw, 14px)' }}
+              className="ct-cta-btn group inline-flex items-center gap-3 md:gap-4 font-mono text-[13px] md:text-[14px] tracking-[0.2em] uppercase text-bg bg-primary px-8 py-4 md:px-12 md:py-5 hover:bg-accent transition-colors duration-300"
             >
               <span>Connect with me</span>
               <ArrowRight

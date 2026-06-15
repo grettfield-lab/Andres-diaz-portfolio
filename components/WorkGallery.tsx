@@ -152,7 +152,7 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
           <p className="font-mono text-[14px] tracking-[0.15em] uppercase text-muted mt-7 mb-4">
             {meta.sub}
           </p>
-          <p className="font-display font-light text-[21px] text-muted max-w-[48ch]">
+          <p className="font-display font-light text-[16px] md:text-[21px] text-muted max-w-[48ch]">
             {meta.desc}
           </p>
         </div>

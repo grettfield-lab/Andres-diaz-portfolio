@@ -82,19 +82,19 @@ export default function ContactPageContent() {
 
               <div className="cpc-meta">
                 <p className="font-mono text-[13px] tracking-[0.2em] uppercase text-muted mb-3">Based in</p>
-                <p className="font-display text-[19px] text-primary/75">Bogotá D.C, Colombia</p>
+                <p className="font-display text-[15px] md:text-[19px] text-primary/75">Bogotá D.C, Colombia</p>
               </div>
 
               <div className="cpc-meta">
                 <p className="font-mono text-[13px] tracking-[0.2em] uppercase text-muted mb-3">Availability</p>
-                <p className="font-display text-[19px] text-primary/75">Open for projects in 2026</p>
+                <p className="font-display text-[15px] md:text-[19px] text-primary/75">Open for projects in 2026</p>
               </div>
 
               <div className="cpc-meta">
                 <p className="font-mono text-[13px] tracking-[0.2em] uppercase text-muted mb-3">Services</p>
                 <ul className="space-y-1 list-none">
                   {['Cinematography', 'Photography', 'Documentary', 'Visual Direction'].map((s) => (
-                    <li key={s} className="font-display font-light text-[19px] text-primary/60">{s}</li>
+                    <li key={s} className="font-display font-light text-[15px] md:text-[19px] text-primary/60">{s}</li>
                   ))}
                 </ul>
               </div>
@@ -104,8 +104,8 @@ export default function ContactPageContent() {
             <div className="cpc-form">
               {submitted ? (
                 <div className="py-16 border-t border-white/10">
-                  <p className="font-display font-semibold text-[27px] text-primary mb-3">Message sent.</p>
-                  <p className="font-display font-light text-[19px] text-muted">
+                  <p className="font-display font-semibold text-[22px] md:text-[27px] text-primary mb-3">Message sent.</p>
+                  <p className="font-display font-light text-[15px] md:text-[19px] text-muted">
                     I&apos;ll be in touch within 2 business days.
                   </p>
                 </div>

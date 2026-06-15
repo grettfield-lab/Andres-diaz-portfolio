@@ -19,7 +19,7 @@ export default function BackToTop() {
     <button
       onClick={() => gsap.to(window, { duration: 1.1, scrollTo: 0, ease: 'power3.inOut' })}
       aria-label="Back to top"
-      className="fixed bottom-8 right-8 w-10 h-10 flex items-center justify-center border border-white/15 bg-bg/80 backdrop-blur-sm text-muted hover:text-accent hover:border-accent"
+      className="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-white/15 bg-bg/80 backdrop-blur-sm text-muted hover:text-accent hover:border-accent"
       style={{
         zIndex: 9500,
         opacity: visible ? 1 : 0,

@@ -154,11 +154,7 @@ export default function Nav() {
   const linkColor = navOnLight
     ? 'text-[#0A0A0A]/60 hover:text-[#0A0A0A]'
     : 'text-muted hover:text-primary'
-  const logoColor = navOnLight
-    ? 'text-[#0A0A0A]'
-    : scrolled
-      ? 'text-primary'
-      : 'text-primary/70'
+  const logoColor = navOnLight ? 'text-[#0A0A0A]' : 'text-primary'
 
   return (
     <>

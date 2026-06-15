@@ -100,7 +100,7 @@ export default function Hero() {
       </div>
 
       {/* Right — image */}
-      <div className="relative overflow-hidden order-1 md:order-2 h-[50vw] max-h-[480px] md:max-h-none md:h-auto min-h-[240px]">
+      <div className="relative overflow-hidden order-1 md:order-2 h-[44vh] md:h-auto min-h-[220px]">
         <div ref={imgRef} className="absolute inset-0 scale-[1.06]" style={{ willChange: 'transform' }}>
           <Image
             src="https://picsum.photos/seed/ferro-cinematic-hero/900/1200"

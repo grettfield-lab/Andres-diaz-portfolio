@@ -1,0 +1,47 @@
+import type { Metadata } from 'next'
+import { Outfit, Space_Mono } from 'next/font/google'
+import './globals.css'
+import TransitionProvider from '@/components/TransitionProvider'
+import DotField from '@/components/DotField'
+import BackToTop from '@/components/BackToTop'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '600', '700', '900'],
+  variable: '--font-outfit',
+  display: 'swap',
+})
+
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-space-mono',
+  display: 'swap',
+})
+
+
+export const metadata: Metadata = {
+  title: 'Andres Diaz - Cinematographer & Photographer',
+  description:
+    'Portfolio of Andres Díaz, cinematographer and photographer working across documentary, narrative film, and commercial production.',
+  openGraph: {
+    title: 'Andres Diaz - Cinematographer & Photographer',
+    description:
+      'Portfolio of Andres Díaz, cinematographer and photographer working across documentary, narrative film, and commercial production.',
+    type: 'website',
+  },
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es" className={`${outfit.variable} ${spaceMono.variable}`}>
+      <body>
+        <DotField />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <TransitionProvider>{children}</TransitionProvider>
+        </div>
+        <BackToTop />
+      </body>
+    </html>
+  )
+}

@@ -18,8 +18,6 @@ export default function Hero() {
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    gsap.config({ force3D: true })
-    gsap.ticker.lagSmoothing(0)
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {

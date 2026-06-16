@@ -43,8 +43,14 @@ export default function TransitionProvider({ children }: { children: React.React
 
   useEffect(() => {
     gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
-    gsap.config({ force3D: true })
+    // 'auto' only promotes to 3D when beneficial — avoids Chrome GPU layer explosion
+    gsap.config({ force3D: 'auto' })
     gsap.ticker.lagSmoothing(0)
+
+    ScrollTrigger.config({
+      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize,orientationchange',
+      ignoreMobileResize: true,
+    })
 
     const refresh = () => requestAnimationFrame(() => ScrollTrigger.refresh())
     document.fonts.ready.then(refresh)
@@ -53,7 +59,8 @@ export default function TransitionProvider({ children }: { children: React.React
     const t1 = setTimeout(refresh, 200)
     const t2 = setTimeout(refresh, 600)
     const t3 = setTimeout(refresh, 1200)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    const t4 = setTimeout(refresh, 2500)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
   // After route change → reveal:

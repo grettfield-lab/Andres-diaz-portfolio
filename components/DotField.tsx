@@ -232,7 +232,7 @@ export default function DotField() {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 5, pointerEvents: 'none' }}
       aria-hidden="true"
     />
   )

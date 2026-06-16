@@ -35,21 +35,21 @@ export default function Contact() {
         { autoAlpha: 0, y: 72 },
         {
           autoAlpha: 1, y: 0, duration: 0.95, ease: 'power2.inOut', stagger: 0.1,
-          scrollTrigger: { trigger: '.ct-heading', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.ct-heading', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.ct-info-item',
         { autoAlpha: 0, y: 28 },
         {
           autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.inOut', stagger: 0.09,
-          scrollTrigger: { trigger: '.ct-info-row', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.ct-info-row', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.ct-cta-btn',
         { autoAlpha: 0, y: 28, scale: 0.97 },
         {
           autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.ct-cta-btn', start: 'top 92%', once: true },
+          scrollTrigger: { trigger: '.ct-cta-btn', start: 'top 92%', once: true, invalidateOnRefresh: true },
         }
       )
 

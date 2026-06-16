@@ -67,14 +67,14 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         { autoAlpha: 0, y: 32 },
         {
           autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.07,
-          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: '.wg-grid', start: 'top bottom', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.wg-caption',
         { autoAlpha: 0, y: 12 },
         {
           autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
-          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: '.wg-grid', start: 'top bottom', once: true, invalidateOnRefresh: true },
         }
       )
 

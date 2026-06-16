@@ -24,14 +24,14 @@ export default function Services() {
         { autoAlpha: 0, y: 24 },
         {
           autoAlpha: 1, y: 0, duration: 0.85, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.services-heading', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.services-heading', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.service-row',
         { autoAlpha: 0, x: -40, y: 14 },
         {
           autoAlpha: 1, x: 0, y: 0, duration: 0.85, ease: 'power2.inOut', stagger: 0.1,
-          scrollTrigger: { trigger: '.services-list', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.services-list', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 

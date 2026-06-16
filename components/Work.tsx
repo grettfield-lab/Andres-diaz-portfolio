@@ -138,7 +138,7 @@ export default function Work() {
         { autoAlpha: 0, y: 36 },
         {
           autoAlpha: 1, y: 0, duration: 0.9, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.work-main-heading', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.work-main-heading', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 

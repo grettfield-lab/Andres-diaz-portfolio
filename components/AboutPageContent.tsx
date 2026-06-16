@@ -85,14 +85,14 @@ export default function AboutPageContent() {
         { autoAlpha: 0, x: -48 },
         {
           autoAlpha: 1, x: 0, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.apc-bio-para',
         { autoAlpha: 0, y: 40 },
         {
           autoAlpha: 1, y: 0, duration: 0.85, ease: 'power3.out', stagger: 0.13,
-          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 
@@ -101,7 +101,7 @@ export default function AboutPageContent() {
         { autoAlpha: 0, y: 64 },
         {
           autoAlpha: 1, y: 0, duration: 1.1, ease: 'power3.out', stagger: 0.16,
-          scrollTrigger: { trigger: '.apc-manifesto', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-manifesto', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 
@@ -110,7 +110,7 @@ export default function AboutPageContent() {
         { autoAlpha: 0, x: -36 },
         {
           autoAlpha: 1, x: 0, duration: 0.7, ease: 'power3.out', stagger: 0.07,
-          scrollTrigger: { trigger: '.apc-credits', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-credits', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 
@@ -119,7 +119,7 @@ export default function AboutPageContent() {
         { autoAlpha: 0, x: -36 },
         {
           autoAlpha: 1, x: 0, duration: 0.7, ease: 'power3.out', stagger: 0.06,
-          scrollTrigger: { trigger: '.apc-awards', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-awards', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 
@@ -128,7 +128,7 @@ export default function AboutPageContent() {
         { autoAlpha: 0, scale: 1.04 },
         {
           autoAlpha: 1, scale: 1, duration: 1.2, ease: 'power3.out',
-          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 

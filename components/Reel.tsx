@@ -25,14 +25,16 @@ export default function Reel() {
         { autoAlpha: 0, y: 12 },
         {
           autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.reel-label', start: 'top 90%', once: true },
+          scrollTrigger: { trigger: '.reel-label', start: 'top 90%', once: true, invalidateOnRefresh: true },
         }
       )
+      // No scale on reel-video-container — it has transform-gpu (translateZ) which
+      // conflicts with GSAP scale in Chrome, causing compositor layer corruption.
       gsap.fromTo('.reel-video-container',
-        { autoAlpha: 0, scale: 0.98 },
+        { autoAlpha: 0 },
         {
-          autoAlpha: 1, scale: 1, duration: 1.0, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.reel-video-container', start: 'top 88%', once: true },
+          autoAlpha: 1, duration: 1.0, ease: 'power2.inOut',
+          scrollTrigger: { trigger: '.reel-video-container', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 

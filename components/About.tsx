@@ -24,28 +24,28 @@ export default function About() {
         { autoAlpha: 0, y: 56 },
         {
           autoAlpha: 1, y: 0, duration: 1.1, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.about-manifesto', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.about-manifesto', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.about-bio p',
         { autoAlpha: 0, y: 28 },
         {
           autoAlpha: 1, y: 0, duration: 0.85, ease: 'power2.inOut', stagger: 0.12,
-          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.about-bio a',
         { autoAlpha: 0, y: 16 },
         {
           autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
       gsap.fromTo('.about-portrait',
         { autoAlpha: 0, scale: 1.04 },
         {
           autoAlpha: 1, scale: 1, duration: 1.1, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true },
+          scrollTrigger: { trigger: '.about-body', start: 'top 88%', once: true, invalidateOnRefresh: true },
         }
       )
 

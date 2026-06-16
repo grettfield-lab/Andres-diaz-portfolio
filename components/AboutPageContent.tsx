@@ -52,20 +52,9 @@ export default function AboutPageContent() {
 
     gsap.registerPlugin(ScrollTrigger)
 
-    const ctx = gsap.context(() => {
-      // Parallax on hero background image
-      gsap.to('.apc-hero-img',  {
-        yPercent: 22,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.apc-hero-img',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
-      })
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
 
+    const ctx = gsap.context(() => {
       // Hero entrance
       gsap.fromTo('.apc-hero-label',
         { autoAlpha: 0, y: 20 },
@@ -132,36 +121,35 @@ export default function AboutPageContent() {
         }
       )
 
-      // --- Parallax ---
-      gsap.to('.apc-manifesto', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: { trigger: '.apc-manifesto', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
-      })
-      gsap.to('.apc-bio-head', {
-        yPercent: -8,
-        ease: 'none',
-        scrollTrigger: { trigger: '.apc-bio-section', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
-      })
-      gsap.to('.apc-portrait-inner', {
-        yPercent: -14,
-        ease: 'none',
-        scrollTrigger: { trigger: '.apc-portrait', start: 'top bottom', end: 'bottom top', scrub: 1.8, invalidateOnRefresh: true },
-      })
-      gsap.utils.toArray<HTMLElement>('.apc-credit-row').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -5,
+      if (!isMobile) {
+        // Parallax on hero background image
+        gsap.to('.apc-hero-img', {
+          yPercent: 22,
           ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+          scrollTrigger: {
+            trigger: '.apc-hero-img',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.8,
+            invalidateOnRefresh: true,
+          },
         })
-      })
-      gsap.utils.toArray<HTMLElement>('.apc-award-row').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -5,
+        gsap.to('.apc-manifesto', {
+          yPercent: -10,
           ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: '.apc-manifesto', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
         })
-      })
+        gsap.to('.apc-bio-head', {
+          yPercent: -8,
+          ease: 'none',
+          scrollTrigger: { trigger: '.apc-bio-section', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
+        })
+        gsap.to('.apc-portrait-inner', {
+          yPercent: -14,
+          ease: 'none',
+          scrollTrigger: { trigger: '.apc-portrait', start: 'top bottom', end: 'bottom top', scrub: 1.8, invalidateOnRefresh: true },
+        })
+      }
     }, wrapperRef)
 
     return () => ctx.revert()
@@ -247,7 +235,7 @@ export default function AboutPageContent() {
 
         {/* Portrait full-width */}
         <div className="apc-portrait max-w-[1400px] mx-auto mt-16 md:mt-20 relative overflow-hidden transform-gpu" style={{ aspectRatio: '21/9' }}>
-          <div className="apc-portrait-inner absolute" style={{ inset: '-10%', willChange: 'transform' }}>
+          <div className="apc-portrait-inner absolute" style={{ inset: '-10%' }}>
             <Image
               src="https://picsum.photos/seed/diaz-portrait-wide/1400/600"
               alt="Andres Díaz at work"

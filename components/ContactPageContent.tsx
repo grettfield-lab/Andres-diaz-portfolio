@@ -34,6 +34,8 @@ export default function ContactPageContent() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.2 })
       tl.fromTo('.cpc-label',
@@ -53,37 +55,38 @@ export default function ContactPageContent() {
         '-=0.6'
       )
 
-      // --- Parallax ---
-      gsap.to('.cpc-label, .cpc-heading-line', {
-        yPercent: -8,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: wrapperRef.current,
-          start: 'top top',
-          end: '40% top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
-      gsap.utils.toArray<HTMLElement>('.cpc-meta').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -6,
+      if (!isMobile) {
+        // --- Parallax ---
+        gsap.to('.cpc-label, .cpc-heading-line', {
+          yPercent: -8,
           ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+          scrollTrigger: {
+            trigger: wrapperRef.current,
+            start: 'top top',
+            end: '40% top',
+            scrub: 1.6,
+            invalidateOnRefresh: true,
+          },
         })
-      })
-      // Form: very subtle so fields don't separate visually
-      gsap.to('.cpc-form', {
-        y: -12,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.cpc-form',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 2.0,
-          invalidateOnRefresh: true,
-        },
-      })
+        gsap.utils.toArray<HTMLElement>('.cpc-meta').forEach((el) => {
+          gsap.to(el, {
+            yPercent: -6,
+            ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+          })
+        })
+        gsap.to('.cpc-form', {
+          y: -12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.cpc-form',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 2.0,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
     }, wrapperRef)
 
     return () => ctx.revert()

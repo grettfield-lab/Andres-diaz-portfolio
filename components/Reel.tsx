@@ -84,11 +84,11 @@ export default function Reel() {
           aria-label="Play reel"
           onKeyDown={(e) => e.key === 'Enter' && handlePlay()}
         >
-          {/* Oversized inner for parallax */}
+          {/* Oversized inner for parallax clipping */}
           {!playing && (
             <div
               className="reel-img-inner absolute"
-              style={{ inset: '-10%', willChange: 'transform' }}
+              style={{ inset: '-10%' }}
             >
               <Image
                 src="https://picsum.photos/seed/diaz-reel-poster/1400/787"
@@ -108,8 +108,7 @@ export default function Reel() {
           {!playing && (
             <div className="absolute inset-0 flex items-center justify-center z-[2]">
               <div className="relative flex items-center justify-center">
-                <div className="absolute w-24 h-24 rounded-full border border-white/20 animate-ping opacity-30" />
-                <div className="w-20 h-20 rounded-full border border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all duration-400 group-hover:scale-110 group-hover:border-white/70 group-hover:bg-black/50">
+                <div className="w-20 h-20 rounded-full border border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:border-white/70 group-hover:bg-black/50">
                   <Play size={28} strokeWidth={1.5} className="text-white ml-1" aria-hidden="true" />
                 </div>
               </div>

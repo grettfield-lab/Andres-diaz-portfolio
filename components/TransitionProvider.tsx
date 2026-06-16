@@ -56,11 +56,10 @@ export default function TransitionProvider({ children }: { children: React.React
     document.fonts.ready.then(refresh)
     if (document.readyState === 'complete') refresh()
     else window.addEventListener('load', refresh, { once: true })
-    const t1 = setTimeout(refresh, 200)
-    const t2 = setTimeout(refresh, 600)
+    const t1 = setTimeout(refresh, 150)
+    const t2 = setTimeout(refresh, 500)
     const t3 = setTimeout(refresh, 1200)
-    const t4 = setTimeout(refresh, 2500)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   // After route change → reveal:

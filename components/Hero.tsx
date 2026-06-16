@@ -37,20 +37,20 @@ export default function Hero() {
           .from(ctaRef.current, { opacity: 0, y: 24, duration: 0.85, ease: 'power2.inOut' }, '-=0.5')
           .from(imgRef.current, { opacity: 0, scale: 1.14, duration: 1.4, ease: 'power2.inOut' }, '-=1.0')
 
-        // Image parallax
-        gsap.to(imgRef.current, {
-          yPercent: 28,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.8,
-            invalidateOnRefresh: true,
-          },
-        })
-
         if (!isMobile) {
+          // Image parallax
+          gsap.to(imgRef.current, {
+            yPercent: 28,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 1.8,
+              invalidateOnRefresh: true,
+            },
+          })
+
           // Text parallax — heading
           gsap.to(headlineRef.current, {
             yPercent: -10,

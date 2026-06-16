@@ -130,9 +130,9 @@ export default function About() {
           </div>
         </div>
 
-        {/* Portrait with oversized inner for parallax within overflow:hidden */}
+        {/* Portrait — oversized inner for parallax clipping */}
         <div className="about-portrait relative overflow-hidden transform-gpu" style={{ aspectRatio: '4/5' }}>
-          <div className="about-portrait-img absolute" style={{ inset: '-10%', willChange: 'transform' }}>
+          <div className="about-portrait-img absolute" style={{ inset: '-10%' }}>
             <Image
               src="https://picsum.photos/seed/diaz-portrait-studio/800/1000"
               alt="Andres Díaz — Cinematographer"

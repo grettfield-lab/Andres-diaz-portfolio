@@ -45,8 +45,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ScrollFade />
         <LocaleWrapper>
-          {/* DotField is inside this stacking context (z-index:1) so canvas z-index:5
-              paints above page sections but below Nav (z-9000) and transition overlays */}
           <div style={{ position: 'relative', zIndex: 1 }}>
             <DotField />
             <TransitionProvider>{children}</TransitionProvider>

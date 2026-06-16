@@ -30,7 +30,10 @@ export default function Contact() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
+      // Entrance
       gsap.fromTo('.ct-heading-line',
         { autoAlpha: 0, y: 72 },
         {
@@ -53,44 +56,20 @@ export default function Contact() {
         }
       )
 
-      // Parallax — heading
-      gsap.to('.ct-heading', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.ct-heading',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — info row (subtle)
-      gsap.to('.ct-info-row', {
-        yPercent: -6,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.ct-info-row',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.7,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — CTA button (very subtle)
-      gsap.to('.ct-cta-btn', {
-        yPercent: -4,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.ct-cta-btn',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
-      })
+      if (!isMobile) {
+        // Parallax — heading only
+        gsap.to('.ct-heading', {
+          yPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.ct-heading',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.6,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
     }, sectionRef)
 
     return () => ctx.revert()

@@ -19,8 +19,10 @@ export default function Reel() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
-      // Entrance — slow-fast-slow
+      // Entrance
       gsap.fromTo('.reel-label',
         { autoAlpha: 0, y: 12 },
         {
@@ -28,8 +30,6 @@ export default function Reel() {
           scrollTrigger: { trigger: '.reel-label', start: 'top 90%', once: true, invalidateOnRefresh: true },
         }
       )
-      // No scale on reel-video-container — it has transform-gpu (translateZ) which
-      // conflicts with GSAP scale in Chrome, causing compositor layer corruption.
       gsap.fromTo('.reel-video-container',
         { autoAlpha: 0 },
         {
@@ -38,31 +38,20 @@ export default function Reel() {
         }
       )
 
-      // Parallax — inner poster image (within overflow:hidden container)
-      gsap.to('.reel-img-inner', {
-        yPercent: -12,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.reel-video-container',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — label row (subtle)
-      gsap.to('.reel-label', {
-        yPercent: -8,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.reel-label',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
+      if (!isMobile) {
+        // Parallax — inner poster image (within overflow:hidden)
+        gsap.to('.reel-img-inner', {
+          yPercent: -12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.reel-video-container',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.8,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
     }, sectionRef)
 
     return () => ctx.revert()

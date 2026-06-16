@@ -2,28 +2,20 @@
 
 import { useEffect, useRef } from 'react'
 
-const SPACING = 16
-const DOT_R   = 0.65
+const SPACING = 22
+const DOT_R   = 0.7
 
-// Direct cursor repulsion
-const REPEL_R = 75
-const REPEL_K = 2200
+const REPEL_R = 80
+const REPEL_K = 2400
 
-// Spring physics
-const SPRING  = 0.052
-const DAMP    = 0.78
+const SPRING  = 0.055
+const DAMP    = 0.76
 
-// Ripple / wave system
-const WAVE_SPEED  = 3.2
-const WAVE_FORCE  = 0.28
-const WAVE_WIDTH  = 32
-const WAVE_LIFE   = 50
-const WAVE_SAMPLE = 16
-const WAVE_MAX    = 10
+// Base: warm dim white / Hot: subtle warm gray
+const BR = 240, BG = 237, BB = 232, BA = 0.10
+const HR = 168, HG = 166, HB = 165, HA = 0.50
 
-// Base color: warm dim white  /  Hot color: subtle warm gray
-const BR = 240, BG = 237, BB = 232, BA = 0.11
-const HR = 168, HG = 166, HB = 165, HA = 0.52
+const ACTIVE_R2 = (REPEL_R * 2.5) ** 2
 
 export default function DotField() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -34,22 +26,15 @@ export default function DotField() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    interface Dot  { rx: number; ry: number; x: number; y: number; vx: number; vy: number }
-    interface Wave { ox: number; oy: number; age: number; strong?: boolean }
+    interface Dot { rx: number; ry: number; x: number; y: number; vx: number; vy: number }
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let W = 0, H = 0
     let dots: Dot[] = []
-    let waves: Wave[] = []
     let mx = -9999, my = -9999
     let raf = 0
-    let frame = 0
-    let lastWX = -9999, lastWY = -9999
 
     const build = () => {
-      // Use the canvas's actual rendered CSS size for 1:1 coordinate accuracy.
-      // visualViewport can differ from the fixed element's rendered size on mobile
-      // (iOS address bar, keyboard open, etc.), causing tap positions to drift.
       const rect = canvas.getBoundingClientRect()
       W = Math.round(rect.width)  || Math.round(window.innerWidth)
       H = Math.round(rect.height) || Math.round(window.innerHeight)
@@ -65,95 +50,84 @@ export default function DotField() {
     const drawStatic = () => {
       ctx.clearRect(0, 0, W, H)
       ctx.fillStyle = `rgba(${BR},${BG},${BB},${BA})`
+      ctx.beginPath()
       for (const d of dots) {
-        ctx.beginPath()
+        ctx.moveTo(d.rx + DOT_R, d.ry)
         ctx.arc(d.rx, d.ry, DOT_R, 0, Math.PI * 2)
-        ctx.fill()
       }
-    }
-
-    const spawnWave = (x: number, y: number) => {
-      if (waves.length >= WAVE_MAX) waves.shift()
-      waves.push({ ox: x, oy: y, age: 0 })
+      ctx.fill()
     }
 
     const tick = () => {
-      frame++
       ctx.clearRect(0, 0, W, H)
 
-      if (mx > -500 && frame % WAVE_SAMPLE === 0) {
-        const moved = (mx - lastWX) ** 2 + (my - lastWY) ** 2
-        if (moved > 9) {
-          spawnWave(mx, my)
-          lastWX = mx; lastWY = my
-        }
-      }
+      const hasCursor = mx > -500
 
-      let wi = waves.length
-      while (wi--) {
-        waves[wi].age++
-        if (waves[wi].age >= (waves[wi].strong ? WAVE_LIFE * 1.5 : WAVE_LIFE)) waves.splice(wi, 1)
-      }
-
+      // Physics — only for dots in the active zone or still moving
       for (const d of dots) {
-        const cdx = d.x - mx
-        const cdy = d.y - my
-        const cr2 = cdx * cdx + cdy * cdy
+        const cdx = d.rx - mx
+        const cdy = d.ry - my
+        const inZone = hasCursor && (cdx * cdx + cdy * cdy < ACTIVE_R2)
 
-        if (cr2 < REPEL_R * REPEL_R && cr2 > 0.01) {
-          const cr = Math.sqrt(cr2)
-          const f  = REPEL_K / cr2
-          d.vx += (cdx / cr) * f
-          d.vy += (cdy / cr) * f
-        }
-
-        for (const w of waves) {
-          const wdx = d.rx - w.ox
-          const wdy = d.ry - w.oy
-          const wr2 = wdx * wdx + wdy * wdy
-          if (wr2 < 0.01) continue
-          const wr    = Math.sqrt(wr2)
-          const life  = w.strong ? WAVE_LIFE * 1.5 : WAVE_LIFE
-          const force = w.strong ? WAVE_FORCE * 4.5 : WAVE_FORCE
-          const front = w.age * WAVE_SPEED
-          const gap   = Math.abs(wr - front)
-          if (gap < WAVE_WIDTH) {
-            const shape   = (1 - gap / WAVE_WIDTH) ** 2
-            const decay   = 1 - w.age / life
-            const impulse = force * shape * decay
-            d.vx += (wdx / wr) * impulse
-            d.vy += (wdy / wr) * impulse
+        if (inZone || Math.abs(d.vx) > 0.003 || Math.abs(d.vy) > 0.003) {
+          if (inZone) {
+            const fdx = d.x - mx
+            const fdy = d.y - my
+            const cr2 = fdx * fdx + fdy * fdy
+            if (cr2 < REPEL_R * REPEL_R && cr2 > 0.01) {
+              const cr = Math.sqrt(cr2)
+              d.vx += (fdx / cr) * (REPEL_K / cr2)
+              d.vy += (fdy / cr) * (REPEL_K / cr2)
+            }
           }
+          d.vx += (d.rx - d.x) * SPRING
+          d.vy += (d.ry - d.y) * SPRING
+          d.vx *= DAMP
+          d.vy *= DAMP
+          d.x  += d.vx
+          d.y  += d.vy
+        } else {
+          d.x = d.rx; d.y = d.ry; d.vx = 0; d.vy = 0
         }
+      }
 
-        d.vx += (d.rx - d.x) * SPRING
-        d.vy += (d.ry - d.y) * SPRING
-        d.vx *= DAMP
-        d.vy *= DAMP
-        d.x  += d.vx
-        d.y  += d.vy
+      // Batch draw: all dots in base color in one path (single fill call)
+      ctx.fillStyle = `rgba(${BR},${BG},${BB},${BA})`
+      ctx.beginPath()
+      for (const d of dots) {
+        ctx.moveTo(d.x + DOT_R, d.y)
+        ctx.arc(d.x, d.y, DOT_R, 0, Math.PI * 2)
+      }
+      ctx.fill()
 
-        const ndx = d.x - mx
-        const ndy = d.y - my
-        const nr2 = ndx * ndx + ndy * ndy
-        const cursorT = nr2 < REPEL_R * REPEL_R
-          ? Math.max(0, 1 - Math.sqrt(nr2) / REPEL_R)
-          : 0
+      // Over-draw active dots with highlight color
+      if (hasCursor) {
+        for (const d of dots) {
+          const cdx = d.rx - mx
+          const cdy = d.ry - my
+          if (cdx * cdx + cdy * cdy >= ACTIVE_R2) continue
 
-        const disp  = Math.sqrt((d.x - d.rx) ** 2 + (d.y - d.ry) ** 2)
-        const waveT = Math.min(disp / 14, 1) * 0.55
+          const ndx = d.x - mx
+          const ndy = d.y - my
+          const nr2 = ndx * ndx + ndy * ndy
+          const t = nr2 < REPEL_R * REPEL_R
+            ? Math.max(0, 1 - Math.sqrt(nr2) / REPEL_R)
+            : 0
+          const disp = Math.sqrt((d.x - d.rx) ** 2 + (d.y - d.ry) ** 2)
+          const inf = Math.max(t, Math.min(disp / 14, 1) * 0.55)
+          if (inf < 0.02) continue
 
-        const inf    = Math.max(cursorT, waveT)
-        const cr     = Math.round(BR + (HR - BR) * inf)
-        const cg     = Math.round(BG + (HG - BG) * inf)
-        const cb     = Math.round(BB + (HB - BB) * inf)
-        const ca     = BA + (HA - BA) * inf
-        const radius = DOT_R + inf * 1.1
+          const cr = Math.round(BR + (HR - BR) * inf)
+          const cg = Math.round(BG + (HG - BG) * inf)
+          const cb = Math.round(BB + (HB - BB) * inf)
+          const ca = BA + (HA - BA) * inf
+          const radius = DOT_R + inf * 1.1
 
-        ctx.fillStyle = `rgba(${cr},${cg},${cb},${ca})`
-        ctx.beginPath()
-        ctx.arc(d.x, d.y, radius, 0, Math.PI * 2)
-        ctx.fill()
+          ctx.fillStyle = `rgba(${cr},${cg},${cb},${ca})`
+          ctx.beginPath()
+          ctx.arc(d.x, d.y, radius, 0, Math.PI * 2)
+          ctx.fill()
+        }
       }
 
       raf = requestAnimationFrame(tick)
@@ -161,32 +135,11 @@ export default function DotField() {
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Pointer events — cover mouse movement and initial touch-down position
-    const onPointerMove = (e: PointerEvent) => {
-      mx = e.clientX
-      my = e.clientY
-    }
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return
-      mx = e.clientX
-      my = e.clientY
-      if (waves.length >= WAVE_MAX) waves.shift()
-      waves.push({ ox: e.clientX, oy: e.clientY, age: 0, strong: true })
-    }
-
-    // Touch-specific: fires even after the browser claims the gesture for scroll
-    // (pointercancel fires at that point and stops pointermove from firing).
-    // Using TouchEvent.touches keeps coordinates accurate through the entire drag.
+    const onPointerMove = (e: PointerEvent) => { mx = e.clientX; my = e.clientY }
     const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        mx = e.touches[0].clientX
-        my = e.touches[0].clientY
-      }
+      if (e.touches.length > 0) { mx = e.touches[0].clientX; my = e.touches[0].clientY }
     }
-
     const onTouchEnd = () => { mx = -9999; my = -9999 }
-
     const onMouseLeave = () => { mx = -9999; my = -9999 }
 
     let resizeTimer: ReturnType<typeof setTimeout>
@@ -206,12 +159,11 @@ export default function DotField() {
       drawStatic()
     } else {
       raf = requestAnimationFrame(tick)
-      document.addEventListener('pointermove',  onPointerMove, { passive: true })
-      document.addEventListener('pointerdown',  onPointerDown, { passive: true })
-      document.addEventListener('touchmove',    onTouchMove,   { passive: true })
-      document.addEventListener('touchend',     onTouchEnd,    { passive: true })
-      document.addEventListener('touchcancel',  onTouchEnd,    { passive: true })
-      document.addEventListener('mouseleave',   onMouseLeave)
+      document.addEventListener('pointermove', onPointerMove, { passive: true })
+      document.addEventListener('touchmove',   onTouchMove,   { passive: true })
+      document.addEventListener('touchend',    onTouchEnd,    { passive: true })
+      document.addEventListener('touchcancel', onTouchEnd,    { passive: true })
+      document.addEventListener('mouseleave',  onMouseLeave)
     }
 
     window.addEventListener('resize', onResize)
@@ -219,12 +171,11 @@ export default function DotField() {
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
-      document.removeEventListener('pointermove',  onPointerMove)
-      document.removeEventListener('pointerdown',  onPointerDown)
-      document.removeEventListener('touchmove',    onTouchMove)
-      document.removeEventListener('touchend',     onTouchEnd)
-      document.removeEventListener('touchcancel',  onTouchEnd)
-      document.removeEventListener('mouseleave',   onMouseLeave)
+      document.removeEventListener('pointermove', onPointerMove)
+      document.removeEventListener('touchmove',   onTouchMove)
+      document.removeEventListener('touchend',    onTouchEnd)
+      document.removeEventListener('touchcancel', onTouchEnd)
+      document.removeEventListener('mouseleave',  onMouseLeave)
       window.removeEventListener('resize', onResize)
     }
   }, [])
@@ -232,7 +183,7 @@ export default function DotField() {
   return (
     <canvas
       ref={canvasRef}
-      style={{ position: 'fixed', inset: 0, zIndex: 5, pointerEvents: 'none' }}
+      style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}
       aria-hidden="true"
     />
   )

@@ -18,8 +18,10 @@ export default function Services() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
-      // Entrance — slow-fast-slow
+      // Entrance
       gsap.fromTo('.services-heading',
         { autoAlpha: 0, y: 24 },
         {
@@ -35,33 +37,20 @@ export default function Services() {
         }
       )
 
-      // Parallax — heading
-      gsap.to('.services-heading', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.services-heading',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — service rows (slight depth, staggered by position)
-      gsap.utils.toArray<HTMLElement>('.service-row').forEach((row, i) => {
-        gsap.to(row, {
-          yPercent: -(5 + i * 1.5),
+      if (!isMobile) {
+        // Parallax — heading only
+        gsap.to('.services-heading', {
+          yPercent: -10,
           ease: 'none',
           scrollTrigger: {
-            trigger: row,
+            trigger: '.services-heading',
             start: 'top bottom',
             end: 'bottom top',
-            scrub: 1.5 + i * 0.1,
+            scrub: 1.6,
             invalidateOnRefresh: true,
           },
         })
-      })
+      }
     }, sectionRef)
 
     return () => ctx.revert()

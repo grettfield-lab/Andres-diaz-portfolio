@@ -53,6 +53,8 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
       // Entrances
       gsap.fromTo('.wg-back',
@@ -78,48 +80,20 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         }
       )
 
-      // Parallax — heading text
-      gsap.to('.wg-heading', {
-        yPercent: -20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.wg-heading',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — grid images (inner oversized div within overflow:hidden)
-      gsap.utils.toArray<HTMLElement>('.wg-img-inner').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -12,
+      if (!isMobile) {
+        // Parallax — heading only
+        gsap.to('.wg-heading', {
+          yPercent: -20,
           ease: 'none',
           scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.8,
-            invalidateOnRefresh: true,
-          },
-        })
-      })
-
-      // Parallax — captions (subtle)
-      gsap.utils.toArray<HTMLElement>('.wg-caption').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -5,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
+            trigger: '.wg-heading',
+            start: 'top top',
             end: 'bottom top',
             scrub: 1.6,
             invalidateOnRefresh: true,
           },
         })
-      })
+      }
     }, sectionRef)
 
     return () => ctx.revert()
@@ -175,10 +149,10 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
                   className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   style={{ aspectRatio: '3/2', willChange: 'transform' }}
                 >
-                  {/* Oversized inner div for parallax without clipping */}
+                  {/* Oversized inner div for image cropping room */}
                   <div
                     className="wg-img-inner absolute"
-                    style={{ inset: '-10%', willChange: 'transform' }}
+                    style={{ inset: '-10%' }}
                   >
                     <Image
                       src={p.src}

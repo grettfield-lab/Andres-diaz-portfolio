@@ -22,7 +22,9 @@ export default function Hero() {
 
     const ctx = gsap.context(() => {
       if (!prefersReduced) {
-        // Entrance — slow-fast-slow curve (power2.inOut)
+        const isMobile = window.matchMedia('(max-width: 768px)').matches
+
+        // Entrance
         const tl = gsap.timeline({ delay: 0.15 })
         tl.from(descriptorRef.current, {
           opacity: 0, y: 24, duration: 0.9, ease: 'power2.inOut',
@@ -35,7 +37,7 @@ export default function Hero() {
           .from(ctaRef.current, { opacity: 0, y: 24, duration: 0.85, ease: 'power2.inOut' }, '-=0.5')
           .from(imgRef.current, { opacity: 0, scale: 1.14, duration: 1.4, ease: 'power2.inOut' }, '-=1.0')
 
-        // Image parallax (existing)
+        // Image parallax
         gsap.to(imgRef.current, {
           yPercent: 28,
           ease: 'none',
@@ -48,31 +50,33 @@ export default function Hero() {
           },
         })
 
-        // Text parallax — heading drifts slightly slower than scroll
-        gsap.to(headlineRef.current, {
-          yPercent: -10,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 2.0,
-            invalidateOnRefresh: true,
-          },
-        })
+        if (!isMobile) {
+          // Text parallax — heading
+          gsap.to(headlineRef.current, {
+            yPercent: -10,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 2.0,
+              invalidateOnRefresh: true,
+            },
+          })
 
-        // Descriptor and CTA drift even subtler
-        gsap.to([descriptorRef.current, ctaRef.current], {
-          yPercent: -6,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 2.2,
-            invalidateOnRefresh: true,
-          },
-        })
+          // Descriptor and CTA
+          gsap.to([descriptorRef.current, ctaRef.current], {
+            yPercent: -6,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 2.2,
+              invalidateOnRefresh: true,
+            },
+          })
+        }
       }
     }, sectionRef)
 

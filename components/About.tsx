@@ -18,8 +18,10 @@ export default function About() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
-      // Entrance — slow-fast-slow
+      // Entrance
       gsap.fromTo('.about-manifesto',
         { autoAlpha: 0, y: 56 },
         {
@@ -49,44 +51,33 @@ export default function About() {
         }
       )
 
-      // Parallax — manifesto text
-      gsap.to('.about-manifesto', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.about-manifesto',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
+      if (!isMobile) {
+        // Parallax — manifesto
+        gsap.to('.about-manifesto', {
+          yPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.about-manifesto',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.6,
+            invalidateOnRefresh: true,
+          },
+        })
 
-      // Parallax — bio text (subtle)
-      gsap.to('.about-bio', {
-        yPercent: -6,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.about-body',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Parallax — portrait image inner (stronger, within overflow:hidden)
-      gsap.to('.about-portrait-img', {
-        yPercent: -15,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.about-portrait',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
-      })
+        // Parallax — portrait image inner (within overflow:hidden)
+        gsap.to('.about-portrait-img', {
+          yPercent: -15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.about-portrait',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.8,
+            invalidateOnRefresh: true,
+          },
+        })
+      }
     }, sectionRef)
 
     return () => ctx.revert()

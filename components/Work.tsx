@@ -132,8 +132,10 @@ export default function Work() {
 
     gsap.registerPlugin(ScrollTrigger)
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+
     const ctx = gsap.context(() => {
-      // Entrance — slow-fast-slow
+      // Entrance
       gsap.fromTo('.work-main-heading',
         { autoAlpha: 0, y: 36 },
         {
@@ -163,48 +165,20 @@ export default function Work() {
         )
       })
 
-      // Section heading parallax
-      gsap.to('.work-main-heading', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.work-main-heading',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.6,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      // Category header row parallax
-      gsap.utils.toArray<HTMLElement>('.work-section-header').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -6,
+      if (!isMobile) {
+        // Parallax — main heading only
+        gsap.to('.work-main-heading', {
+          yPercent: -10,
           ease: 'none',
           scrollTrigger: {
-            trigger: el,
+            trigger: '.work-main-heading',
             start: 'top bottom',
             end: 'bottom top',
             scrub: 1.6,
             invalidateOnRefresh: true,
           },
         })
-      })
-
-      // Image parallax — inner div extends past the overflow:hidden container
-      gsap.utils.toArray<HTMLElement>('.work-img-inner').forEach((el) => {
-        gsap.to(el, {
-          yPercent: -12,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.8,
-            invalidateOnRefresh: true,
-          },
-        })
-      })
+      }
     }, sectionRef)
 
     return () => ctx.revert()
@@ -258,10 +232,10 @@ export default function Work() {
                         className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                         style={{ aspectRatio: '4/5', willChange: 'transform' }}
                       >
-                        {/* Inner div oversized to allow parallax without clipping */}
+                        {/* Inner div oversized for image cropping room */}
                         <div
                           className="work-img-inner absolute"
-                          style={{ inset: '-10%', willChange: 'transform' }}
+                          style={{ inset: '-10%' }}
                         >
                           <Image
                             src={p.src}

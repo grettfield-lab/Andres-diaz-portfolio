@@ -139,11 +139,28 @@ export default function DotField() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const onPointerMove = (e: PointerEvent) => { mx = e.clientX; my = e.clientY; startLoop() }
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) { mx = e.touches[0].clientX; my = e.touches[0].clientY; startLoop() }
-    }
-    const onTouchEnd = () => { mx = -9999; my = -9999 }
     const onMouseLeave = () => { mx = -9999; my = -9999 }
+
+    // Touch: distinguish scroll (vertical) from intentional interaction
+    let touchStartX = 0, touchStartY = 0, touchIsScroll = false
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 0) return
+      touchStartX = e.touches[0].clientX
+      touchStartY = e.touches[0].clientY
+      touchIsScroll = false
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 0) return
+      const t = e.touches[0]
+      if (!touchIsScroll) {
+        const dx = Math.abs(t.clientX - touchStartX)
+        const dy = Math.abs(t.clientY - touchStartY)
+        if (dy > 8) touchIsScroll = dy > dx
+      }
+      if (touchIsScroll) { mx = -9999; my = -9999; return }
+      mx = t.clientX; my = t.clientY; startLoop()
+    }
+    const onTouchEnd = () => { mx = -9999; my = -9999; touchIsScroll = false }
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const onResize = () => {
@@ -152,16 +169,16 @@ export default function DotField() {
         cancelAnimationFrame(raf)
         raf = 0
         build()
-        if (prefersReduced) drawStatic()
-        else drawStatic() // static draw on resize; loop restarts on next pointer event
+        drawStatic()
       }, 200)
     }
 
     build()
-    drawStatic() // initial render without rAF
+    drawStatic()
 
     if (!prefersReduced) {
       document.addEventListener('pointermove', onPointerMove, { passive: true })
+      document.addEventListener('touchstart',  onTouchStart,  { passive: true })
       document.addEventListener('touchmove',   onTouchMove,   { passive: true })
       document.addEventListener('touchend',    onTouchEnd,    { passive: true })
       document.addEventListener('touchcancel', onTouchEnd,    { passive: true })
@@ -174,6 +191,7 @@ export default function DotField() {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
       document.removeEventListener('pointermove', onPointerMove)
+      document.removeEventListener('touchstart',  onTouchStart)
       document.removeEventListener('touchmove',   onTouchMove)
       document.removeEventListener('touchend',    onTouchEnd)
       document.removeEventListener('touchcancel', onTouchEnd)

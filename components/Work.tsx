@@ -227,10 +227,10 @@ export default function Work() {
                     className="work-card group block isolate"
                   >
                     {/* Image */}
-                    <div className="work-image overflow-hidden mb-5 transform-gpu">
+                    <div className="work-image overflow-hidden mb-5">
                       <div
                         className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                        style={{ aspectRatio: '4/5', willChange: 'transform' }}
+                        style={{ aspectRatio: '4/5' }}
                       >
                         {/* Inner div oversized for image cropping room */}
                         <div

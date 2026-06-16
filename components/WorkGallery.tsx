@@ -128,14 +128,14 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
           </p>
           <h1
             className="font-display font-black leading-[0.9] tracking-normal text-white"
-            style={{ fontSize: 'clamp(52px, 7.5vw, 112px)' }}
+            style={{ fontSize: 'clamp(28px, 9vw, 112px)' }}
           >
             {meta.title}
           </h1>
-          <p className="font-mono text-[14px] tracking-[0.15em] uppercase text-muted mt-7 mb-4">
+          <p className="font-mono text-[13px] md:text-[14px] tracking-[0.15em] uppercase text-muted mt-7 mb-4">
             {meta.sub}
           </p>
-          <p className="font-display font-light text-[16px] md:text-[21px] text-muted max-w-[48ch]">
+          <p className="font-display font-light text-[15px] md:text-[21px] text-muted max-w-[48ch]">
             {meta.desc}
           </p>
         </div>
@@ -144,10 +144,10 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         <div className="wg-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {projects.map((p) => (
             <div key={p.id} className="wg-card group cursor-default isolate">
-              <div className="wg-image overflow-hidden transform-gpu">
+              <div className="wg-image overflow-hidden">
                 <div
                   className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  style={{ aspectRatio: '3/2', willChange: 'transform' }}
+                  style={{ aspectRatio: '3/2' }}
                 >
                   {/* Oversized inner div for image cropping room */}
                   <div

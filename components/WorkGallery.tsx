@@ -6,26 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { useLocale } from '@/contexts/LocaleContext'
 
 export type WorkCategory = 'photography' | 'cinematography' | 'other-projects'
-
-const categoryMeta: Record<WorkCategory, { title: string; sub: string; desc: string }> = {
-  photography: {
-    title: 'Photography',
-    sub: 'Portrait · Editorial · Fine Art',
-    desc: 'Still images built from patience and precision.',
-  },
-  cinematography: {
-    title: 'Cinematography',
-    sub: 'Feature · Documentary · Short Film',
-    desc: 'Moving images told through light, framing, and time.',
-  },
-  'other-projects': {
-    title: 'Other Projects',
-    sub: 'Commercial · Visual Direction · Installation',
-    desc: 'Cross-discipline work that defies a single category.',
-  },
-}
 
 const projectsByCategory: Record<
   WorkCategory,
@@ -56,9 +39,13 @@ const projectsByCategory: Record<
 }
 
 export default function WorkGallery({ category }: { category: WorkCategory }) {
+  const { t } = useLocale()
   const sectionRef = useRef<HTMLElement>(null)
   const projects = projectsByCategory[category]
-  const meta = categoryMeta[category]
+
+  // Map category to translated metadata
+  const catKey = category === 'other-projects' ? 'otherProjects' : category
+  const meta = t.workGallery.categories[catKey as 'photography' | 'cinematography' | 'otherProjects']
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -67,17 +54,31 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
+      // Entrances
       gsap.fromTo('.wg-back',
         { autoAlpha: 0, x: -14 },
         { autoAlpha: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: 0.1 }
       )
-
       gsap.fromTo('.wg-heading',
         { autoAlpha: 0, y: 56 },
         { autoAlpha: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.2 }
       )
+      gsap.fromTo('.wg-image',
+        { autoAlpha: 0, y: 32 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.07,
+          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+        }
+      )
+      gsap.fromTo('.wg-caption',
+        { autoAlpha: 0, y: 12 },
+        {
+          autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
+          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
+        }
+      )
 
-      // Parallax on heading text as user scrolls
+      // Parallax — heading text
       gsap.to('.wg-heading', {
         yPercent: -20,
         ease: 'none',
@@ -90,21 +91,35 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         },
       })
 
-      gsap.fromTo('.wg-image',
-        { autoAlpha: 0, y: 32 },
-        {
-          autoAlpha: 1, y: 0, duration: 0.75, ease: 'power3.out', stagger: 0.07,
-          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
-        }
-      )
+      // Parallax — grid images (inner oversized div within overflow:hidden)
+      gsap.utils.toArray<HTMLElement>('.wg-img-inner').forEach((el) => {
+        gsap.to(el, {
+          yPercent: -12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.8,
+            invalidateOnRefresh: true,
+          },
+        })
+      })
 
-      gsap.fromTo('.wg-caption',
-        { autoAlpha: 0, y: 12 },
-        {
-          autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
-          scrollTrigger: { trigger: '.wg-grid', start: 'top 88%', once: true, invalidateOnRefresh: true },
-        }
-      )
+      // Parallax — captions (subtle)
+      gsap.utils.toArray<HTMLElement>('.wg-caption').forEach((el) => {
+        gsap.to(el, {
+          yPercent: -5,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.6,
+            invalidateOnRefresh: true,
+          },
+        })
+      })
     }, sectionRef)
 
     return () => ctx.revert()
@@ -122,6 +137,7 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
         <div className="wg-heading pt-14 md:pt-20 mb-12 md:mb-16">
           <Link
             href="/"
+            data-home-up="true"
             className="wg-back inline-flex items-center gap-2 font-mono text-[14px] tracking-[0.15em] uppercase text-muted hover:text-primary transition-colors duration-300 mb-10 group"
           >
             <ArrowLeft
@@ -130,15 +146,15 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
               className="transition-transform duration-300 group-hover:-translate-x-1"
               aria-hidden="true"
             />
-            Back to home
+            {t.workGallery.back}
           </Link>
 
           <p className="font-mono text-[14px] tracking-[0.22em] uppercase text-muted mb-3">
-            Work
+            {t.workGallery.workLabel}
           </p>
           <h1
-            className="font-display font-black leading-[0.9] tracking-normal text-primary"
-            style={{ fontSize: 'clamp(48px, 7vw, 108px)' }}
+            className="font-display font-black leading-[0.9] tracking-normal text-white"
+            style={{ fontSize: 'clamp(52px, 7.5vw, 112px)' }}
           >
             {meta.title}
           </h1>
@@ -150,24 +166,30 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
           </p>
         </div>
 
-        {/* Symmetric 3-column grid — equal aspect, no col-span mixing */}
+        {/* Grid */}
         <div className="wg-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {projects.map((p) => (
-            <div key={p.id} className="wg-card group cursor-default">
-              <div className="wg-image overflow-hidden">
+            <div key={p.id} className="wg-card group cursor-default isolate">
+              <div className="wg-image overflow-hidden transform-gpu">
                 <div
                   className="relative overflow-hidden transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   style={{ aspectRatio: '3/2', willChange: 'transform' }}
                 >
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    fill
-                    className="object-cover"
-                    loading="lazy"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
+                  {/* Oversized inner div for parallax without clipping */}
+                  <div
+                    className="wg-img-inner absolute"
+                    style={{ inset: '-10%', willChange: 'transform' }}
+                  >
+                    <Image
+                      src={p.src}
+                      alt={p.alt}
+                      fill
+                      className="object-cover"
+                      loading="lazy"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100 z-10" />
                 </div>
               </div>
               <div className="wg-caption pt-3 pb-5">
@@ -175,7 +197,7 @@ export default function WorkGallery({ category }: { category: WorkCategory }) {
                   {p.title}
                 </p>
                 <p className="font-mono text-[13px] tracking-[0.12em] uppercase text-muted mt-1">
-                  {p.type} · {p.year}
+                  {t.projectTypes[p.type] ?? p.type} · {p.year}
                 </p>
               </div>
             </div>

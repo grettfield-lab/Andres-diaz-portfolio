@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { useLocale } from '@/contexts/LocaleContext'
 
 const credits = [
   { role: 'Feature Film', project: 'Tierra Adentro', year: '2022', note: 'Cinematographer' },
@@ -26,7 +27,24 @@ const awards = [
 ]
 
 export default function AboutPageContent() {
+  const { t } = useLocale()
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  const roleMap: Record<string, string> = {
+    'Feature Film': t.aboutPage.creditRoles.featureFilm,
+    'Documentary': t.aboutPage.creditRoles.documentary,
+    'Short Film': t.aboutPage.creditRoles.shortFilm,
+    'Photography': t.aboutPage.creditRoles.photography,
+    'Commercial': t.aboutPage.creditRoles.commercial,
+  }
+
+  const noteMap: Record<string, string> = {
+    'Cinematographer': t.aboutPage.creditNotes.cinematographer,
+    'Director & DP': t.aboutPage.creditNotes.directorDP,
+    'Photographer': t.aboutPage.creditNotes.photographer,
+    'Director of Photography': t.aboutPage.creditNotes.directorOfPhotography,
+    'Visual Director': t.aboutPage.creditNotes.visualDirector,
+  }
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -105,7 +123,7 @@ export default function AboutPageContent() {
         }
       )
 
-      // Portrait
+      // Portrait entrance
       gsap.fromTo('.apc-portrait',
         { autoAlpha: 0, scale: 1.04 },
         {
@@ -113,6 +131,37 @@ export default function AboutPageContent() {
           scrollTrigger: { trigger: '.apc-bio-section', start: 'top 88%', once: true },
         }
       )
+
+      // --- Parallax ---
+      gsap.to('.apc-manifesto', {
+        yPercent: -10,
+        ease: 'none',
+        scrollTrigger: { trigger: '.apc-manifesto', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
+      })
+      gsap.to('.apc-bio-head', {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: { trigger: '.apc-bio-section', start: 'top bottom', end: 'bottom top', scrub: 1.6, invalidateOnRefresh: true },
+      })
+      gsap.to('.apc-portrait-inner', {
+        yPercent: -14,
+        ease: 'none',
+        scrollTrigger: { trigger: '.apc-portrait', start: 'top bottom', end: 'bottom top', scrub: 1.8, invalidateOnRefresh: true },
+      })
+      gsap.utils.toArray<HTMLElement>('.apc-credit-row').forEach((el) => {
+        gsap.to(el, {
+          yPercent: -5,
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+        })
+      })
+      gsap.utils.toArray<HTMLElement>('.apc-award-row').forEach((el) => {
+        gsap.to(el, {
+          yPercent: -5,
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5, invalidateOnRefresh: true },
+        })
+      })
     }, wrapperRef)
 
     return () => ctx.revert()
@@ -121,7 +170,7 @@ export default function AboutPageContent() {
   return (
     <div ref={wrapperRef}>
       {/* ── Hero ── */}
-      <section className="relative min-h-[75vh] md:min-h-[85vh] pt-[72px] overflow-hidden">
+      <section className="relative min-h-[75vh] md:min-h-[85vh] pt-[72px] overflow-hidden transform-gpu">
         <div className="apc-hero-img absolute inset-0">
           <Image
             src="https://picsum.photos/seed/diaz-about-hero/1600/900"
@@ -135,15 +184,22 @@ export default function AboutPageContent() {
         </div>
 
         <div className="relative z-10 flex flex-col justify-end h-full min-h-[75vh] md:min-h-[85vh] px-6 md:px-10 pb-16 md:pb-24 max-w-[1400px] mx-auto">
-          <p className="apc-hero-label font-mono text-[14px] tracking-[0.22em] uppercase text-muted mb-6">
-            Cinematographer & Photographer
+          <p
+            className="apc-hero-label font-mono text-[16px] tracking-[0.22em] uppercase mb-6"
+            style={{
+              marginLeft: '-2px',
+              color: '#c4c0ba',
+              textShadow: '0 1px 16px rgba(0,0,0,0.85), 0 2px 6px rgba(0,0,0,0.7)',
+            }}
+          >
+            {t.aboutPage.role}
           </p>
           <h1
             className="apc-hero-name font-display font-black leading-[0.88] tracking-normal text-primary"
             style={{ fontSize: 'clamp(60px, 8vw, 130px)' }}
           >
             ANDRES<br />
-            <span className="text-accent">DIAZ</span>
+            <span className="text-accent" style={{ marginLeft: '-2px', display: 'inline-block' }}>DIAZ</span>
           </h1>
         </div>
       </section>
@@ -152,24 +208,24 @@ export default function AboutPageContent() {
       <section className="apc-bio-section py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-12 md:gap-24 items-start">
           <div>
-            <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-6">About</p>
+            <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-6">{t.aboutPage.label}</p>
             <h2
               className="apc-bio-head font-display font-black leading-[0.92] tracking-normal text-primary"
               style={{ fontSize: 'clamp(34px, 4vw, 60px)' }}
             >
-              A decade<br />behind<br />the lens.
+              {t.aboutPage.bioHead}
             </h2>
           </div>
 
           <div className="space-y-6">
             <p className="apc-bio-para font-display font-light text-[19px] md:text-[21px] leading-relaxed text-primary/75 max-w-[60ch]">
-              Andres Díaz is a cinematographer and photographer working across documentary film, narrative fiction, and commercial production. Based between Buenos Aires and New York, his work is built around observation and an attentiveness to the quality of available light.
+              {t.aboutPage.bio1}
             </p>
             <p className="apc-bio-para font-display font-light text-[19px] md:text-[21px] leading-relaxed text-primary/75 max-w-[60ch]">
-              His films have screened at international festivals across Latin America and Europe. His photography has appeared in cultural publications, artist campaigns, and solo exhibitions. Each project begins with a long period of listening — to the subject, to the space, to the silence before the shot.
+              {t.aboutPage.bio2}
             </p>
             <p className="apc-bio-para font-display font-light text-[19px] md:text-[21px] leading-relaxed text-primary/75 max-w-[60ch]">
-              He works closely with directors, brands, and artists who share a commitment to images that earn their place on screen — not because they are beautiful, but because they are true.
+              {t.aboutPage.bio3}
             </p>
 
             <div className="pt-4">
@@ -177,7 +233,7 @@ export default function AboutPageContent() {
                 href="/contact"
                 className="inline-flex items-center gap-2 font-mono text-[14px] tracking-[0.18em] uppercase text-primary border-b border-accent pb-1 hover:text-accent transition-colors duration-300 group"
               >
-                <span>Start a project</span>
+                <span>{t.aboutPage.startProject}</span>
                 <ArrowRight
                   size={12}
                   strokeWidth={1.5}
@@ -190,15 +246,17 @@ export default function AboutPageContent() {
         </div>
 
         {/* Portrait full-width */}
-        <div className="apc-portrait max-w-[1400px] mx-auto mt-16 md:mt-20 relative overflow-hidden" style={{ aspectRatio: '21/9' }}>
-          <Image
-            src="https://picsum.photos/seed/diaz-portrait-wide/1400/600"
-            alt="Andres Díaz at work"
-            fill
-            className="object-cover"
-            loading="lazy"
-            sizes="100vw"
-          />
+        <div className="apc-portrait max-w-[1400px] mx-auto mt-16 md:mt-20 relative overflow-hidden transform-gpu" style={{ aspectRatio: '21/9' }}>
+          <div className="apc-portrait-inner absolute" style={{ inset: '-10%', willChange: 'transform' }}>
+            <Image
+              src="https://picsum.photos/seed/diaz-portrait-wide/1400/600"
+              alt="Andres Díaz at work"
+              fill
+              className="object-cover"
+              loading="lazy"
+              sizes="100vw"
+            />
+          </div>
         </div>
       </section>
 
@@ -209,10 +267,10 @@ export default function AboutPageContent() {
             className="font-display font-black leading-[0.88] tracking-normal text-primary"
             style={{ fontSize: 'clamp(36px, 6vw, 100px)' }}
           >
-            <span className="apc-manifesto-line block">PATIENCE IS</span>
-            <span className="apc-manifesto-line block">A TECHNIQUE.</span>
-            <span className="apc-manifesto-line block text-accent">LIGHT IS</span>
-            <span className="apc-manifesto-line block">THE LANGUAGE.</span>
+            <span className="apc-manifesto-line block">{t.aboutPage.manifestoLine1}</span>
+            <span className="apc-manifesto-line block">{t.aboutPage.manifestoLine2}</span>
+            <span className="apc-manifesto-line block text-accent">{t.aboutPage.manifestoLine3}</span>
+            <span className="apc-manifesto-line block">{t.aboutPage.manifestoLine4}</span>
           </p>
         </div>
       </section>
@@ -221,7 +279,7 @@ export default function AboutPageContent() {
       <section className="apc-credits py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-14">
-            Selected credits
+            {t.aboutPage.creditsLabel}
           </p>
           <ul className="list-none divide-y divide-white/5">
             {credits.map((c) => (
@@ -230,13 +288,13 @@ export default function AboutPageContent() {
                 className="apc-credit-row grid grid-cols-[auto_1fr_auto] md:grid-cols-[180px_1fr_160px_auto] items-baseline gap-x-6 md:gap-x-10 gap-y-1 py-6"
               >
                 <span className="font-mono text-[14px] tracking-[0.15em] uppercase text-muted">
-                  {c.role}
+                  {roleMap[c.role] ?? c.role}
                 </span>
                 <span className="font-display font-semibold text-[21px] md:text-[27px] text-primary tracking-[-0.01em]">
                   {c.project}
                 </span>
                 <span className="hidden md:block font-mono text-[14px] tracking-[0.1em] text-muted">
-                  {c.note}
+                  {noteMap[c.note] ?? c.note}
                 </span>
                 <span className="font-mono text-[14px] text-muted text-right">
                   {c.year}
@@ -251,7 +309,7 @@ export default function AboutPageContent() {
       <section className="apc-awards bg-surface/75 py-24 md:py-32 px-6 md:px-10">
         <div className="max-w-[1400px] mx-auto">
           <p className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted mb-14">
-            Awards & Nominations
+            {t.aboutPage.awardsLabel}
           </p>
           <ul className="list-none divide-y divide-white/5">
             {awards.map((a, i) => (
@@ -280,7 +338,7 @@ export default function AboutPageContent() {
                       : 'text-muted border-white/10',
                   ].join(' ')}
                 >
-                  {a.status}
+                  {a.status === 'Winner' ? t.aboutPage.awardWinner : t.aboutPage.awardNominee}
                 </span>
                 <span
                   className={[
@@ -288,7 +346,7 @@ export default function AboutPageContent() {
                     a.status === 'Winner' ? 'text-accent' : 'text-muted',
                   ].join(' ')}
                 >
-                  {a.status}
+                  {a.status === 'Winner' ? t.aboutPage.awardWinner : t.aboutPage.awardNominee}
                 </span>
               </li>
             ))}

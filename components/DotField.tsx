@@ -13,15 +13,15 @@ const REPEL_K = 2200
 const SPRING  = 0.052
 const DAMP    = 0.78
 
-// Ripple / wave system — kept subtle/minimalist
-const WAVE_SPEED  = 3.2   // px per frame ring expands
-const WAVE_FORCE  = 0.28  // velocity impulse at wave peak (very gentle)
-const WAVE_WIDTH  = 32    // ring band thickness (px)
-const WAVE_LIFE   = 50    // frames before ripple dies
-const WAVE_SAMPLE = 16    // spawn ripple every N frames if mouse moved
-const WAVE_MAX    = 10    // max concurrent ripples
+// Ripple / wave system
+const WAVE_SPEED  = 3.2
+const WAVE_FORCE  = 0.28
+const WAVE_WIDTH  = 32
+const WAVE_LIFE   = 50
+const WAVE_SAMPLE = 16
+const WAVE_MAX    = 10
 
-// Base color: warm dim white  /  Hot color: #a8a6a5 (subtle warm gray)
+// Base color: warm dim white  /  Hot color: subtle warm gray
 const BR = 240, BG = 237, BB = 232, BA = 0.11
 const HR = 168, HG = 166, HB = 165, HA = 0.52
 
@@ -35,7 +35,7 @@ export default function DotField() {
     if (!ctx) return
 
     interface Dot  { rx: number; ry: number; x: number; y: number; vx: number; vy: number }
-    interface Wave { ox: number; oy: number; age: number }
+    interface Wave { ox: number; oy: number; age: number; strong?: boolean }
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let W = 0, H = 0
@@ -47,9 +47,12 @@ export default function DotField() {
     let lastWX = -9999, lastWY = -9999
 
     const build = () => {
-      const vp = window.visualViewport
-      W = Math.round(vp ? vp.width  : window.innerWidth)
-      H = Math.round(vp ? vp.height : window.innerHeight)
+      // Use the canvas's actual rendered CSS size for 1:1 coordinate accuracy.
+      // visualViewport can differ from the fixed element's rendered size on mobile
+      // (iOS address bar, keyboard open, etc.), causing tap positions to drift.
+      const rect = canvas.getBoundingClientRect()
+      W = Math.round(rect.width)  || Math.round(window.innerWidth)
+      H = Math.round(rect.height) || Math.round(window.innerHeight)
       canvas.width  = Math.round(W * dpr)
       canvas.height = Math.round(H * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -78,7 +81,6 @@ export default function DotField() {
       frame++
       ctx.clearRect(0, 0, W, H)
 
-      // Sample mouse trail to spawn ripples
       if (mx > -500 && frame % WAVE_SAMPLE === 0) {
         const moved = (mx - lastWX) ** 2 + (my - lastWY) ** 2
         if (moved > 9) {
@@ -87,15 +89,13 @@ export default function DotField() {
         }
       }
 
-      // Advance & prune waves
       let wi = waves.length
       while (wi--) {
         waves[wi].age++
-        if (waves[wi].age >= WAVE_LIFE) waves.splice(wi, 1)
+        if (waves[wi].age >= (waves[wi].strong ? WAVE_LIFE * 1.5 : WAVE_LIFE)) waves.splice(wi, 1)
       }
 
       for (const d of dots) {
-        // --- cursor repulsion ---
         const cdx = d.x - mx
         const cdy = d.y - my
         const cr2 = cdx * cdx + cdy * cdy
@@ -107,25 +107,25 @@ export default function DotField() {
           d.vy += (cdy / cr) * f
         }
 
-        // --- ripple wave forces (use rest pos for clean ring shape) ---
         for (const w of waves) {
           const wdx = d.rx - w.ox
           const wdy = d.ry - w.oy
           const wr2 = wdx * wdx + wdy * wdy
           if (wr2 < 0.01) continue
           const wr    = Math.sqrt(wr2)
+          const life  = w.strong ? WAVE_LIFE * 1.5 : WAVE_LIFE
+          const force = w.strong ? WAVE_FORCE * 4.5 : WAVE_FORCE
           const front = w.age * WAVE_SPEED
           const gap   = Math.abs(wr - front)
           if (gap < WAVE_WIDTH) {
             const shape   = (1 - gap / WAVE_WIDTH) ** 2
-            const decay   = 1 - w.age / WAVE_LIFE
-            const impulse = WAVE_FORCE * shape * decay
+            const decay   = 1 - w.age / life
+            const impulse = force * shape * decay
             d.vx += (wdx / wr) * impulse
             d.vy += (wdy / wr) * impulse
           }
         }
 
-        // --- spring return ---
         d.vx += (d.rx - d.x) * SPRING
         d.vy += (d.ry - d.y) * SPRING
         d.vx *= DAMP
@@ -133,7 +133,6 @@ export default function DotField() {
         d.x  += d.vx
         d.y  += d.vy
 
-        // --- color: cursor proximity + displacement glow ---
         const ndx = d.x - mx
         const ndy = d.y - my
         const nr2 = ndx * ndx + ndy * ndy
@@ -141,7 +140,6 @@ export default function DotField() {
           ? Math.max(0, 1 - Math.sqrt(nr2) / REPEL_R)
           : 0
 
-        // dots glow when displaced by waves
         const disp  = Math.sqrt((d.x - d.rx) ** 2 + (d.y - d.ry) ** 2)
         const waveT = Math.min(disp / 14, 1) * 0.55
 
@@ -161,27 +159,35 @@ export default function DotField() {
       raf = requestAnimationFrame(tick)
     }
 
-    // Returns visual-viewport offset (non-zero only when pinch-zoomed)
-    const vpOff = () => {
-      const vp = window.visualViewport
-      return vp ? { ox: vp.offsetLeft, oy: vp.offsetTop } : { ox: 0, oy: 0 }
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Pointer events — cover mouse movement and initial touch-down position
+    const onPointerMove = (e: PointerEvent) => {
+      mx = e.clientX
+      my = e.clientY
     }
 
-    // Mouse (desktop)
-    const onMouseMove  = (e: MouseEvent) => { mx = e.clientX; my = e.clientY }
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      mx = e.clientX
+      my = e.clientY
+      if (waves.length >= WAVE_MAX) waves.shift()
+      waves.push({ ox: e.clientX, oy: e.clientY, age: 0, strong: true })
+    }
+
+    // Touch-specific: fires even after the browser claims the gesture for scroll
+    // (pointercancel fires at that point and stops pointermove from firing).
+    // Using TouchEvent.touches keeps coordinates accurate through the entire drag.
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        mx = e.touches[0].clientX
+        my = e.touches[0].clientY
+      }
+    }
+
+    const onTouchEnd = () => { mx = -9999; my = -9999 }
+
     const onMouseLeave = () => { mx = -9999; my = -9999 }
-
-    // Touch (mobile) — changedTouches gives the finger that actually moved
-    const setTouch = (e: TouchEvent) => {
-      const t = e.changedTouches[0]
-      if (!t) return
-      const { ox, oy } = vpOff()
-      mx = t.clientX + ox
-      my = t.clientY + oy
-    }
-    const onTouchStart  = (e: TouchEvent) => setTouch(e)
-    const onTouchMove   = (e: TouchEvent) => setTouch(e)
-    const onTouchEnd    = () => { mx = -9999; my = -9999 }
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const onResize = () => {
@@ -194,20 +200,18 @@ export default function DotField() {
       }, 200)
     }
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
     build()
 
     if (prefersReduced) {
       drawStatic()
     } else {
       raf = requestAnimationFrame(tick)
-      document.addEventListener('mousemove',   onMouseMove,  { passive: true })
-      document.addEventListener('mouseleave',  onMouseLeave)
-      document.addEventListener('touchstart',  onTouchStart, { passive: true })
-      document.addEventListener('touchmove',   onTouchMove,  { passive: true })
-      document.addEventListener('touchend',    onTouchEnd)
-      document.addEventListener('touchcancel', onTouchEnd)
+      document.addEventListener('pointermove',  onPointerMove, { passive: true })
+      document.addEventListener('pointerdown',  onPointerDown, { passive: true })
+      document.addEventListener('touchmove',    onTouchMove,   { passive: true })
+      document.addEventListener('touchend',     onTouchEnd,    { passive: true })
+      document.addEventListener('touchcancel',  onTouchEnd,    { passive: true })
+      document.addEventListener('mouseleave',   onMouseLeave)
     }
 
     window.addEventListener('resize', onResize)
@@ -215,12 +219,12 @@ export default function DotField() {
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(resizeTimer)
-      document.removeEventListener('mousemove',   onMouseMove)
-      document.removeEventListener('mouseleave',  onMouseLeave)
-      document.removeEventListener('touchstart',  onTouchStart)
-      document.removeEventListener('touchmove',   onTouchMove)
-      document.removeEventListener('touchend',    onTouchEnd)
-      document.removeEventListener('touchcancel', onTouchEnd)
+      document.removeEventListener('pointermove',  onPointerMove)
+      document.removeEventListener('pointerdown',  onPointerDown)
+      document.removeEventListener('touchmove',    onTouchMove)
+      document.removeEventListener('touchend',     onTouchEnd)
+      document.removeEventListener('touchcancel',  onTouchEnd)
+      document.removeEventListener('mouseleave',   onMouseLeave)
       window.removeEventListener('resize', onResize)
     }
   }, [])

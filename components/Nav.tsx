@@ -5,18 +5,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { X, Menu, ChevronDown } from 'lucide-react'
+import { X, Menu, ChevronDown, Globe } from 'lucide-react'
+import { useLocale } from '@/contexts/LocaleContext'
+import { LOCALE_NAMES, Locale } from '@/locales/translations'
 
-const workLinks = [
-  { label: 'Photography', href: '/work/photography' },
-  { label: 'Cinematography', href: '/work/cinematography' },
-  { label: 'Other Projects', href: '/work/other-projects' },
-]
+const LOCALES: Locale[] = ['en', 'es', 'fr', 'de']
 
 export default function Nav() {
+  const { t, locale, setLocale } = useLocale()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [workDropdown, setWorkDropdown] = useState(false)
+  const [langDropdown, setLangDropdown] = useState(false)
   const [mobileWorkOpen, setMobileWorkOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const mobileOverlayRef = useRef<HTMLDivElement>(null)
@@ -27,6 +27,12 @@ export default function Nav() {
   const contactLinkRef = useRef<HTMLAnchorElement>(null)
   const pathname = usePathname()
   const isHome = pathname === '/'
+
+  const workLinks = [
+    { label: t.nav.photography, href: '/work/photography' },
+    { label: t.nav.cinematography, href: '/work/cinematography' },
+    { label: t.nav.otherProjects, href: '/work/other-projects' },
+  ]
 
   useEffect(() => {
     setMobileOpen(false)
@@ -129,9 +135,7 @@ export default function Nav() {
     setMobileWorkOpen(false)
   }
 
-  // All interactive nav items use white + mix-blend-difference
-  // so they invert against any background for maximum legibility
-  const itemClass = 'text-white mix-blend-difference'
+  const itemClass = 'text-muted hover:text-accent transition-colors duration-300'
 
   return (
     <>
@@ -141,7 +145,7 @@ export default function Nav() {
         role="navigation"
         aria-label="Main navigation"
       >
-        {/* Backdrop — separate layer so mix-blend works against page content */}
+        {/* Backdrop */}
         <div
           aria-hidden="true"
           className={[
@@ -154,8 +158,9 @@ export default function Nav() {
         <div className="flex-1 relative z-[1]">
           <Link
             href="/"
-            className={`font-mono text-[17px] tracking-[0.2em] font-bold uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
+            className="font-mono text-[17px] tracking-[0.2em] font-bold uppercase text-muted hover:text-accent transition-colors duration-300"
             aria-label="Home — Andres Díaz"
+            {...(!isHome ? { 'data-home-up': 'true' } : {})}
           >
             AD
           </Link>
@@ -170,21 +175,20 @@ export default function Nav() {
           >
             <button
               ref={workBtnRef}
-              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
+              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase ${itemClass}`}
               aria-expanded={workDropdown}
               aria-haspopup="menu"
             >
-              Work
+              {t.nav.work}
               <ChevronDown
                 size={10}
                 strokeWidth={2}
                 className={`transition-transform duration-200 ${workDropdown ? 'rotate-180' : ''}`}
               />
             </button>
-            {/* Dropdown — isolation: isolate prevents mix-blend bleeding into it */}
             <div
               className={[
-                'absolute top-full left-0 pt-[2px] min-w-[200px] transition-all duration-200 z-10',
+                'absolute top-full left-0 pt-[2px] min-w-[200px] transition-all duration-200 z-[200]',
                 workDropdown
                   ? 'opacity-100 pointer-events-auto translate-y-0'
                   : 'opacity-0 pointer-events-none -translate-y-2',
@@ -212,9 +216,9 @@ export default function Nav() {
             <Link
               ref={aboutLinkRef}
               href="/about"
-              className={`font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase ${itemClass}`}
             >
-              About
+              {t.nav.about}
             </Link>
           </li>
 
@@ -222,10 +226,62 @@ export default function Nav() {
             <Link
               ref={contactLinkRef}
               href="/contact"
-              className={`font-mono text-[15px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
+              className={`font-mono text-[15px] tracking-[0.15em] uppercase ${itemClass}`}
             >
-              Contact
+              {t.nav.contact}
             </Link>
+          </li>
+
+          {/* Language switcher */}
+          <li
+            className="relative"
+            onMouseEnter={() => setLangDropdown(true)}
+            onMouseLeave={() => setLangDropdown(false)}
+          >
+            <button
+              className={`flex items-center gap-1.5 font-mono text-[15px] tracking-[0.15em] uppercase ${itemClass}`}
+              aria-expanded={langDropdown}
+              aria-haspopup="listbox"
+              aria-label={t.nav.language}
+            >
+              <Globe size={13} strokeWidth={1.5} />
+              <span>{LOCALE_NAMES[locale].code}</span>
+              <ChevronDown
+                size={10}
+                strokeWidth={2}
+                className={`transition-transform duration-200 ${langDropdown ? 'rotate-180' : ''}`}
+              />
+            </button>
+            <div
+              className={[
+                'absolute top-full right-0 pt-[2px] min-w-[160px] transition-all duration-200 z-[200]',
+                langDropdown
+                  ? 'opacity-100 pointer-events-auto translate-y-0'
+                  : 'opacity-0 pointer-events-none -translate-y-2',
+              ].join(' ')}
+              role="listbox"
+              style={{ isolation: 'isolate' }}
+            >
+              <div className="bg-surface border border-white/10 rounded-lg py-1 overflow-hidden">
+                {LOCALES.map((loc) => (
+                  <button
+                    key={loc}
+                    role="option"
+                    aria-selected={locale === loc}
+                    onClick={() => { setLocale(loc); setLangDropdown(false) }}
+                    className={[
+                      'flex items-center justify-between w-full font-mono text-[14px] tracking-[0.15em] uppercase px-5 py-3 transition-colors duration-200',
+                      locale === loc
+                        ? 'text-accent bg-white/5'
+                        : 'text-muted hover:text-primary hover:bg-white/5',
+                    ].join(' ')}
+                  >
+                    <span>{LOCALE_NAMES[loc].native}</span>
+                    <span className="text-[11px] opacity-60">{LOCALE_NAMES[loc].code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </li>
         </ul>
 
@@ -234,14 +290,14 @@ export default function Nav() {
           <Link
             href={isHome ? '#contact' : '/contact'}
             className={[
-              `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 border border-white/40 hover:border-white hover:opacity-70 transition-all duration-500 mix-blend-difference text-white`,
+              `hidden lg:inline-flex items-center gap-2 font-mono text-[15px] tracking-[0.15em] uppercase px-4 py-2 border border-muted/40 hover:border-accent text-muted hover:text-accent transition-colors duration-300`,
               scrolled ? 'opacity-0 pointer-events-none translate-y-[-4px]' : 'opacity-100 pointer-events-auto translate-y-0',
             ].join(' ')}
           >
-            Start a project
+            {t.nav.startProject}
           </Link>
           <button
-            className={`p-1 hover:opacity-70 transition-opacity duration-300 ${itemClass}`}
+            className={`p-1 ${itemClass}`}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
@@ -262,7 +318,7 @@ export default function Nav() {
         >
           <div
             ref={progressBarRef}
-            className="h-full w-full bg-white/70 origin-left"
+            className="h-full w-full origin-left bg-gradient-to-r from-white/70 to-accent"
             style={{ transform: 'scaleX(0)', willChange: 'transform' }}
           />
         </div>
@@ -281,7 +337,7 @@ export default function Nav() {
               onClick={() => setMobileWorkOpen(!mobileWorkOpen)}
               className="flex items-center gap-3 font-display font-black text-[clamp(40px,10vw,64px)] text-primary hover:text-accent transition-colors duration-300"
             >
-              Work
+              {t.nav.work}
               <ChevronDown
                 size={28}
                 strokeWidth={1.5}
@@ -316,7 +372,7 @@ export default function Nav() {
               onClick={closeAll}
               className="block font-display font-black text-[clamp(40px,10vw,64px)] text-primary hover:text-accent transition-colors duration-300"
             >
-              About
+              {t.nav.about}
             </Link>
           </li>
 
@@ -326,7 +382,7 @@ export default function Nav() {
               onClick={closeAll}
               className="block font-display font-black text-[clamp(40px,10vw,64px)] text-primary hover:text-accent transition-colors duration-300"
             >
-              Contact
+              {t.nav.contact}
             </Link>
           </li>
         </ul>
@@ -336,8 +392,25 @@ export default function Nav() {
           onClick={closeAll}
           className="mobile-nav-item mt-12 w-fit font-mono text-[15px] tracking-[0.2em] uppercase border border-primary/20 text-primary px-6 py-3 hover:border-accent hover:text-accent transition-colors duration-300"
         >
-          Start a project
+          {t.nav.startProject}
         </Link>
+
+        {/* Mobile language switcher */}
+        <div className="mobile-nav-item mt-8 flex items-center gap-3 flex-wrap">
+          <Globe size={13} strokeWidth={1.5} className="text-muted" />
+          {LOCALES.map((loc) => (
+            <button
+              key={loc}
+              onClick={() => { setLocale(loc) }}
+              className={[
+                'font-mono text-[13px] tracking-[0.15em] uppercase transition-colors duration-200',
+                locale === loc ? 'text-accent' : 'text-muted hover:text-primary',
+              ].join(' ')}
+            >
+              {LOCALE_NAMES[loc].code}
+            </button>
+          ))}
+        </div>
       </div>
     </>
   )
